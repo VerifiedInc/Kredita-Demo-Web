@@ -1,0 +1,143 @@
+version: 2.1
+
+orbs:
+  unumid: unumid/unumid-app-orb@0.5.1
+
+workflows:
+  lint-and-test:
+    jobs:
+      - unumid/lint-and-test:
+          compile_script_name: 'build'
+          filters:
+            branches:
+              ignore:
+                - main
+                - test-circleci
+  build-and-deploy:
+    jobs:
+      - unumid/lint-and-test:
+          compile_script_name: 'build'
+          filters:
+            branches:
+              only:
+                - main
+
+      - unumid/build-and-push-image:
+          requires:
+            - unumid/lint-and-test
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id_1: '408067220840'
+          repo: remix-starter # update with actual repo name
+          image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
+          image_tag_2: dev-latest
+          filters:
+            branches:
+              only:
+                - main
+
+      - unumid/deploy-image:
+          requires:
+            - unumid/build-and-push-image
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: '408067220840'
+          repo: remix-starter # update with actual repo name
+          deployment: remix-starter # update with actual deployment name
+          cluster_name: 'dev-account-saas-cluster'
+          image_tag: 'dev-latest'
+          filters:
+            branches:
+              only:
+                - main
+
+  build-and-deploy-sandbox:
+    jobs:
+      - unumid/lint-and-test:
+          compile_script_name: 'build'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+      - unumid/build-and-push-image:
+          name: unumid/build-and-push-image-sandbox
+          requires:
+            - unumid/lint-and-test
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id_1: '032538391126'
+          account_id_2: '574388719779'
+          repo: remix-starter # update with actual repo name
+          image_tag_1: '${CIRCLE_TAG}'
+          image_tag_2: sandbox-latest
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+/
+            branches:
+              ignore: /.*/
+
+      - unumid/deploy-image:
+          name: unumid/deploy-image-sandbox
+          requires:
+            - unumid/build-and-push-image-sandbox
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: '032538391126'
+          repo: remix-starter # update with actual repo name
+          deployment: remix-starter # update with actual deployment name
+          cluster_name: 'sandbox-account-saas-cluster'
+          image_tag: '${CIRCLE_TAG}'
+          slack_pass_notify_template: success_tagged_deploy_1
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+/
+            branches:
+              ignore: /.*/
+
+  build-and-deploy-test:
+    jobs:
+      - unumid/lint-and-test:
+          compile_script_name: 'build'
+          filters:
+            branches:
+              only:
+                - test-circleci
+
+      - unumid/build-and-push-image:
+          name: unumid/build-and-push-image-test
+          requires:
+            - unumid/lint-and-test
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id_1: '408067220840'
+          repo: remix-starter # update with actual repo name
+          image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
+          image_tag_2: test-latest
+          filters:
+            branches:
+              only:
+                - test-circleci
+
+      - unumid/deploy-image:
+          name: unumid/deploy-image-test
+          requires:
+            - unumid/build-and-push-image-test
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: '408067220840'
+          repo: remix-starter # update with actual repo name
+          deployment: remix-starter # update with actual deployment name
+          cluster_name: 'dev-account-saas-cluster'
+          image_tag: 'test-latest'
+          filters:
+            branches:
+              only:
+                - test-circleci
