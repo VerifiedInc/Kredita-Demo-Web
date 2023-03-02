@@ -51,7 +51,12 @@ export default function Register() {
   return (
     <Box component='main' display='flex' flexDirection='column' marginTop={4}>
       <Form method='post'>
-        <Box component='section' display='flex' flexDirection='column' alignItems='center'>
+        <Box
+          component='section'
+          display='flex'
+          flexDirection='column'
+          alignItems='center'
+        >
           <TextField label='Email' name='email' />
           <TextField
             label='Password'

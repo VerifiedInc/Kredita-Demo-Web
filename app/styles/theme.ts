@@ -199,7 +199,7 @@ export const theme = createTheme({
         sx: {
           borderRadius: 28,
           pl: 0,
-        }
+        },
       },
     },
     MuiOutlinedInput: {
@@ -213,7 +213,7 @@ export const theme = createTheme({
     },
     MuiTextField: {
       defaultProps: {
-        fullWidth: true
+        fullWidth: true,
       },
     },
     MuiListItemButton: {
@@ -288,7 +288,7 @@ export const theme = createTheme({
       },
       defaultProps: {
         size: 'large',
-      }
+      },
     },
   },
   typography,
