@@ -1,5 +1,9 @@
 export const white = '#ffffff';
-export const black = '#000000';
+export const black = '#1C1300';
+
+export const orange = '#FFAD00';
+export const lightOrange = '#FACE6F';
+export const darkOrange = '#CB8A00';
 
 export const green = '#0dbc3d';
 export const lightGreen = '#5ef06d';

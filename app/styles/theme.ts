@@ -29,37 +29,32 @@ declare module '@mui/material/Typography' {
 }
 
 const typography = {
-  fontFamily: 'Lato',
+  fontFamily: 'Nunito',
   h1: {
-    fontFamily: 'PlayfairDisplay',
     fontSize: '2.125rem',
     fontWeight: 700,
     letterSpacing: 0,
     lineHeight: 1.35,
   },
   h2: {
-    fontFamily: 'PlayfairDisplay',
     fontSize: '1.5rem',
     fontWeight: 700,
     letterSpacing: 0,
     lineHeight: 1.33,
   },
   h3: {
-    fontFamily: 'PlayfairDisplay',
     fontSize: '1.25rem',
     fontWeight: 700,
     letterSpacing: 0,
     lineHeight: 1.35,
   },
   h4: {
-    fontFamily: 'Lato',
     fontSize: '1.25rem',
     fontWeight: 700,
     letterSpacing: 0,
     lineHeight: 1.2,
   },
   h5: {
-    fontFamily: 'Lato',
     fontSize: '1rem',
     fontWeight: 700,
     letterSpacing: 0,
@@ -71,57 +66,48 @@ const typography = {
     letterSpacing: '0.15px',
   },
   subtitle1: {
-    fontFamily: 'Lato',
     fontSize: '1rem',
     fontWeight: 700,
     letterSpacing: 0,
     lineHeight: 1.1875,
   },
   subtitle2: {
-    fontFamily: 'Lato',
     fontSize: '0.875rem',
     fontWeight: 700,
     letterSpacing: 0.1,
     lineHeight: 1.5,
   },
   body1: {
-    fontFamily: 'Lato',
     fontSize: '1.25rem',
     fontWeight: 300,
     letterSpacing: 0,
     lineHeight: 1.2,
   },
   body2: {
-    fontFamily: 'Lato',
     fontSize: '1rem',
     fontWeight: 400,
     letterSpacing: 0,
     lineHeight: 1.1875,
   },
   button: {
-    fontFamily: 'Lato',
     // fontSize set by MUI button component sizes, setting it here will screw that up
     fontWeight: 900,
     letterSpacing: 0,
     lineHeight: 1.2,
-    textTransform: 'uppercase' as const,
   },
   caption: {
-    font: 'Lato',
     fontSize: '0.75rem',
     fontWeight: 400,
     letterSpacing: 0,
     lineHeight: 1.25,
   },
   overline: {
-    font: 'Lato',
     fontSize: '0.75rem',
     fontWeight: 400,
     letterSpacing: 0,
     lineHeight: 1.25,
   },
   label: {
-    fontFamily: 'Lato',
     fontSize: '0.75rem',
     fontWeight: 700,
     letterSpacing: 1,
@@ -134,9 +120,9 @@ const typography = {
 export const theme = createTheme({
   palette: {
     primary: {
-      main: colors.green,
-      light: colors.lightGreen,
-      dark: colors.darkGreen,
+      main: colors.orange,
+      light: colors.lightOrange,
+      dark: colors.darkOrange,
       contrastText: colors.white,
     },
     secondary: {
@@ -188,7 +174,7 @@ export const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          marginLeft: '0.15rem',
+          marginLeft: '0.5rem',
           background: `${colors.white} !important`,
           '&:before': {
             content: '""',
@@ -208,6 +194,14 @@ export const theme = createTheme({
         },
       },
     },
+    MuiInputBase: {
+      defaultProps: {
+        sx: {
+          borderRadius: 28,
+          pl: 0,
+        }
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         notchedOutline: {
@@ -215,6 +209,11 @@ export const theme = createTheme({
             ...typography.label,
           },
         },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        fullWidth: true
       },
     },
     MuiListItemButton: {
@@ -276,6 +275,20 @@ export const theme = createTheme({
           ...typography.subtitle2,
         },
       },
+    },
+    MuiButton: {
+      styleOverrides: {
+        text: {
+          color: colors.white,
+        },
+        root: {
+          textTransform: 'none',
+          borderRadius: 30,
+        },
+      },
+      defaultProps: {
+        size: 'large',
+      }
     },
   },
   typography,
