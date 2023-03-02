@@ -39,7 +39,9 @@ export const getSession = async (request: Request) => {
  * @param {Request} request
  * @returns {Promise<string | null>} user
  */
-export const getUserEmail = async (request: Request): Promise<string | null> => {
+export const getUserEmail = async (
+  request: Request
+): Promise<string | null> => {
   const session = await getSession(request);
   const email = session.get(USER_SESSION_KEY);
   return email;
