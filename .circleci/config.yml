@@ -29,7 +29,7 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id_1: '408067220840'
-          repo: remix-starter # update with actual repo name
+          repo: kredita-demo-web
           image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
           image_tag_2: dev-latest
           filters:
@@ -44,9 +44,9 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id: '408067220840'
-          repo: remix-starter # update with actual repo name
-          deployment: remix-starter # update with actual deployment name
-          cluster_name: 'dev-account-saas-cluster'
+          repo: kredita-demo-web
+          deployment: kredita-demo-web
+          cluster_name: 'dev-account-customer-cluster'
           image_tag: 'dev-latest'
           filters:
             branches:
@@ -71,8 +71,7 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id_1: '032538391126'
-          account_id_2: '574388719779'
-          repo: remix-starter # update with actual repo name
+          repo: kredita-demo-web
           image_tag_1: '${CIRCLE_TAG}'
           image_tag_2: sandbox-latest
           filters:
@@ -89,9 +88,9 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id: '032538391126'
-          repo: remix-starter # update with actual repo name
-          deployment: remix-starter # update with actual deployment name
-          cluster_name: 'sandbox-account-saas-cluster'
+          repo: kredita-demo-web
+          deployment: kredita-demo-web
+          cluster_name: 'sandbox-account-customer-cluster'
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
           filters:
@@ -117,7 +116,7 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id_1: '408067220840'
-          repo: remix-starter # update with actual repo name
+          repo: kredita-demo-web
           image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
           image_tag_2: test-latest
           filters:
@@ -133,9 +132,9 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id: '408067220840'
-          repo: remix-starter # update with actual repo name
-          deployment: remix-starter # update with actual deployment name
-          cluster_name: 'dev-account-saas-cluster'
+          repo: kredita-demo-web
+          deployment: kredita-demo-web
+          cluster_name: 'dev-account-customer-cluster'
           image_tag: 'test-latest'
           filters:
             branches:
