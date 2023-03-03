@@ -11,30 +11,12 @@ interface Config {
   newRelicAppName: string;
   newRelicLicenseKey: string;
   newRelicLoggingLicenseKey: string;
-  dbName: string;
-  dbUser: string;
-  dbPassword: string;
-  dbHost: string;
-  dbPort: number;
   sessionSecret: string;
+  unumAPIKey: string;
+  coreServiceUrl: string;
+  unumWalletUrl: string;
+  demoUrl: string;
 }
-
-const dbConfig =
-  process.env.NODE_ENV === 'test'
-    ? {
-        dbName: process.env.TEST_DB_NAME || '',
-        dbUser: process.env.TEST_DB_USER || '',
-        dbPassword: process.env.TEST_DB_PASSWORD || '',
-        dbHost: process.env.TEST_DB_HOST || '',
-        dbPort: parseInt(process.env.TEST_DB_PORT || '5432', 10),
-      }
-    : {
-        dbName: process.env.DB_NAME || '',
-        dbUser: process.env.DB_USER || '',
-        dbPassword: process.env.DB_PASSWORD || '',
-        dbHost: process.env.DB_HOST || '',
-        dbPort: parseInt(process.env.DB_PORT || '5432', 10),
-      };
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
@@ -46,5 +28,8 @@ export const config: Config = {
   newRelicLicenseKey: process.env.NEW_RELIC_LICENSE_KEY || '',
   newRelicLoggingLicenseKey: process.env.NEW_RELIC_LOGGING_LICENSE_KEY || '',
   sessionSecret: process.env.SESSION_SECRET || '',
-  ...dbConfig,
+  unumAPIKey: process.env.UNUM_API_KEY || '',
+  coreServiceUrl: process.env.CORE_SERVICE_URL || '',
+  unumWalletUrl: process.env.UNUM_WALLET_URL || '',
+  demoUrl: process.env.DEMO_URL || '',
 };
