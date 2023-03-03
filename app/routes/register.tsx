@@ -17,25 +17,6 @@ import { hasMatchingCredentials, sharedCredentials } from '~/coreAPI.server';
 import { config } from '~/config';
 import { logger } from '~/logger.server';
 
-/**
- * Represents a credential object which contains plaintext user data.
- */
-interface Credential {
-  id: string; // credential id
-  type: string; // credential type
-  issuer: string; // credential issuer brandId
-  issuanceDate: number; // when credential was created as a milliseconds since epoch unix timestamp
-  expirationDate?: number; // when credentials expires as a milliseconds since epoch unix timestamp
-  data: Map<string, any>; // credential data map that matches the credential type's JSON Schema definition
-}
-
-interface SharedCredentials {
-  uuid: string; // the uuid from the query parameter of the redirect back to your client; identifies the collection of credentials shared by the user
-  credentials: Credential[]; // a list of one or more Credential objects
-  email?: string; // the user's email from the input to /hasMatchingCredentials; only present if email was provided
-  phone?: string; // the user's phone from the input to /hasMatchingCredentials; only present if phone was provided
-}
-
 interface ActionData {
   error?: string;
 }
@@ -96,11 +77,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   // If a sharedCredentialsUuid parameter exists, retrieve the associated credentials and
   // create the user's session - re-directing them to /verified
   if (sharedCredentialsUuid) {
-    const result: SharedCredentials = await sharedCredentials(
-      sharedCredentialsUuid
-    );
-    const { email } = result;
-    return createUserSession(request, String(email), '/verified');
+    const result = await sharedCredentials(sharedCredentialsUuid);
+    if (result) {
+      const { email } = result;
+      return createUserSession(request, String(email), '/verified');
+    }
   }
 
   return null;

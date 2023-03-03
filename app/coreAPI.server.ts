@@ -20,6 +20,28 @@ export interface HasMatchingCredentialsOptions {
 }
 
 /**
+ * Represents a credential object which contains plaintext user data.
+ */
+interface Credential {
+  id: string; // credential id
+  type: string; // credential type
+  issuer: string; // credential issuer brandId
+  issuanceDate: number; // when credential was created as a milliseconds since epoch unix timestamp
+  expirationDate?: number; // when credentials expires as a milliseconds since epoch unix timestamp
+  data: Map<string, any>; // credential data map that matches the credential type's JSON Schema definition
+}
+
+/**
+ * Interface to encapsulate the response body for the /sharedCredentials API call
+ */
+interface SharedCredentials {
+  uuid: string; // the uuid from the query parameter of the redirect back to your client; identifies the collection of credentials shared by the user
+  credentials: Credential[]; // a list of one or more Credential objects
+  email?: string; // the user's email from the input to /hasMatchingCredentials; only present if email was provided
+  phone?: string; // the user's phone from the input to /hasMatchingCredentials; only present if phone was provided
+}
+
+/**
  * Function to make POST request to Unum ID's Core Service API /hasMatchingCredentials endpoint. The intent is to check if
  * a user already has the necessary email and phone credential to enable 1-click sign up.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
@@ -97,7 +119,7 @@ export const hasMatchingCredentials = async (
  *
  * Documentation: https://docs.unumid.co/api-overview#get-shared-credentials
  * @param uuid
- * @returns {Promise<string | null>} if a match for the request is found, returns the Unum ID Web Wallet url for redirect, if no match is found returns null
+ * @returns {Promise<SharedCredentials | null>} if a match for the request is found, returns the shared credentials, if no match is found returns null
  */
 export const sharedCredentials = async (uuid: string) => {
   const headers = {
@@ -130,7 +152,7 @@ export const sharedCredentials = async (uuid: string) => {
     // In a production environment the shared credentials should be appropriately stored in
     // a manner that can be accessed as needed. A brand's access to shared credentials via
     // this endpoint is deleted after 5 minutes of the initial data retrieval.
-    return result;
+    return result as SharedCredentials;
   } catch (e) {
     logger.error(`GET sharedCredentials for uuid: ${uuid} failed. Error: ${e}`);
     throw e;
