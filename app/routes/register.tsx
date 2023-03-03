@@ -4,9 +4,8 @@ import {
   LoaderFunction,
   redirect,
 } from '@remix-run/node';
-import { Form, useActionData } from '@remix-run/react';
+import { Form, Link, useActionData } from '@remix-run/react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
@@ -16,6 +15,10 @@ import { getErrorMessage, getErrorStatus } from '~/errors';
 import { hasMatchingCredentials, sharedCredentials } from '~/coreAPI.server';
 import { config } from '~/config';
 import { logger } from '~/logger.server';
+
+import { theme } from '~/styles/theme';
+import LogInAndRegister from '~/images/log-in-and-register.png';
+import { Button } from '@mui/material';
 
 interface ActionData {
   error?: string;
@@ -92,19 +95,29 @@ export default function Register() {
 
   console.log('actionData', actionData);
   return (
-    <Box component='main' display='flex' flexDirection='column' marginTop={4}>
-      <Form method='post'>
+    <Box
+      component='main'
+      display='flex'
+      flexDirection='column'
+      alignItems='center'
+    >
+      <Typography variant='h1' mt={0} align='center'>
+        You're moments away from magic...
+      </Typography>
+      <Typography variant='h3' mt={4.5} fontWeight={400}>
+        Let's start with your contact info:
+      </Typography>
+      <Form method='post' style={{ width: '100%' }}>
         <Box
           component='section'
           display='flex'
           flexDirection='column'
           alignItems='center'
+          mt={2}
         >
           <TextField label='Email' name='email' />
           <TextField label='Phone' name='phone' sx={{ marginTop: 2 }} />
-          <Button variant='contained' type='submit' sx={{ marginTop: 4 }}>
-            Register
-          </Button>
+          <Button>Next →</Button>
           {actionData?.error && (
             <Typography sx={{ marginTop: 2 }} color={red}>
               {actionData?.error}
@@ -112,6 +125,17 @@ export default function Register() {
           )}
         </Box>
       </Form>
+      <Typography variant='body2' mt={1.8} mb={4.5} color='neutral.dark'>
+        Already have an account?{' '}
+        <Link to='/login' style={{ color: theme.palette.neutral.dark }}>
+          Sign in
+        </Link>
+      </Typography>
+      <img
+        alt='man at desk looking at a robot holding a clock'
+        src={LogInAndRegister}
+        style={{ maxWidth: 264 }}
+      />
     </Box>
   );
 }

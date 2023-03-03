@@ -288,6 +288,14 @@ export const theme = createTheme({
       },
       defaultProps: {
         size: 'large',
+        variant: 'contained',
+        type: 'submit',
+        sx: {
+          mt: 4,
+          py: 2,
+          px: 3.5,
+          fontSize: '1.4rem',
+        },
       },
     },
   },

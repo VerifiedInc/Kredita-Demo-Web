@@ -56,7 +56,7 @@ export const getUserEmail = async (
 export const logout = async (request: Request) => {
   console.log('logout');
   const session = await getSession(request);
-  return redirect('/login', {
+  return redirect('/register', {
     headers: {
       'Set-Cookie': await sessionStorage.destroySession(session),
     },
@@ -85,7 +85,7 @@ export const requireUserEmail = async (request: Request): Promise<string> => {
 export const createUserSession = async (
   request: Request,
   email: string,
-  redirectTo = '/authenticated'
+  redirectTo = '/'
 ) => {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, email);

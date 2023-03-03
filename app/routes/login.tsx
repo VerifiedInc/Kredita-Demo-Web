@@ -1,14 +1,13 @@
 import type { ActionFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, useActionData } from '@remix-run/react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { Form, Link, useActionData } from '@remix-run/react';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 import { red } from '~/styles/colors';
 import { createUserSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
+import LogInAndRegister from '~/images/log-in-and-register.png';
+import { theme } from '~/styles/theme';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -43,8 +42,16 @@ export default function Login() {
   const actionData = useActionData<typeof action>();
 
   return (
-    <Box component='main' display='flex' flexDirection='column' marginTop={4}>
-      <Form method='post'>
+    <Box
+      component='main'
+      display='flex'
+      flexDirection='column'
+      alignItems='center'
+    >
+      <Typography variant='h1' mt={0} mb={4.5} align='center'>
+        You're moments away from magic...
+      </Typography>
+      <Form method='post' style={{ width: '100%' }}>
         <Box
           component='section'
           display='flex'
@@ -58,9 +65,7 @@ export default function Login() {
             type='password'
             sx={{ marginTop: 2 }}
           />
-          <Button variant='contained' type='submit' sx={{ marginTop: 4 }}>
-            Log In
-          </Button>
+          <Button>Sign In</Button>
           {actionData?.error && (
             <Typography sx={{ marginTop: 2 }} color={red}>
               {actionData?.error}
@@ -68,6 +73,17 @@ export default function Login() {
           )}
         </Box>
       </Form>
+      <Typography variant='body2' mt={1.8} mb={4.5} color='neutral.dark'>
+        Don't have an account?{' '}
+        <Link to='/register' style={{ color: theme.palette.neutral.dark }}>
+          Register
+        </Link>
+      </Typography>
+      <img
+        alt='man at desk looking at a robot holding a clock'
+        src={LogInAndRegister}
+        style={{ maxWidth: 264 }}
+      />
     </Box>
   );
 }
