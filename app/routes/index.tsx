@@ -1,32 +1,28 @@
+import { Box, Button } from '@mui/material';
+import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
+import { Form } from '@remix-run/react';
+import { logout, requireUserEmail } from '~/session.server';
+
+// The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
+export const action: ActionFunction = async ({ request }) => {
+  return logout(request);
+};
+
+// The exported `loader` function will be called when the route makes a GET request, i.e. when it is rendered
+export const loader: LoaderFunction = async ({ request }) => {
+  // requireUser will redirect to the login page if the user is not logged in
+  const email = await requireUserEmail(request);
+
+  // return the user to the route, so it can be displayed
+  return json({ email });
+};
+
 export default function Index() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target='_blank'
-            href='https://remix.run/tutorials/blog'
-            rel='noreferrer'
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target='_blank'
-            href='https://remix.run/tutorials/jokes'
-            rel='noreferrer'
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target='_blank' href='https://remix.run/docs' rel='noreferrer'>
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <Box display='flex' flexDirection='column' alignItems='center'>
+      <Form method='post'>
+        <Button>Logout</Button>
+      </Form>
+    </Box>
   );
 }

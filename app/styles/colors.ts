@@ -23,4 +23,4 @@ export const darkYellow = '#bea008';
 
 export const lightGrey = 'rgba(0, 0, 0, 0.23)';
 export const grey = '#bdbdbd';
-export const darkGrey = 'rgba(0, 0, 0, 0.6)';
+export const darkGrey = '#797979';
