@@ -69,7 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
           ? credentialRequestUrl
           : config.unumWalletUrl + credentialRequestUrl
       );
-      logger.info(`URL: ${url}`)
+      logger.info(`URL: ${url}`);
       // user's email address
       url.searchParams.set('email', email);
       // user's phone number
