@@ -16,6 +16,16 @@ Because of this characteristic, even though this is a client side app, not all o
 
 The live web app can be found [here](https://kredita-web.demo.sandbox-unumid.co).
 
+The application's home page is a sample registration page. In order to "register", you will need to enter in the provided test email address and phone number. _These values are coming soon._
+
+After you (the test user) click 'Register', the following occurs for Kredita to leverage your existing credentials.
+  1. A `POST` request is made to [/hasMatchingCredentials](https://kredita-web.demo.sandbox-unumid.co).
+  2. A match for the requested credentials is found and you are redirected to the Unum ID Web Wallet to complete the share credentials request flow.
+  3. After you elect to share your credentials, the Unum ID Web Wallet redirects back to the Kredita demo with a `sharedCredentialsUuid` query parameter.
+  4. The `sharedCredentialsUuid` is used by Kredita in a `GET` request made to [/sharedCredentials/{uuid}](https://docs.unumid.co/api-overview#get-shared-credentials). This gives Kredita access to the credentials, and a user session is created. _Note: A brand's access to shared credentials is deleted after 5 minutes of the initial credential data retrieval._
+
+Functionality for the critical api calls can be found in the [coreAPI.server.ts](https://github.com/UnumID/Kredita-Demo-Web/blob/main/app/coreAPI.server.ts) file. Both `hasMatchingCredentials` and `sharedCredentialsUuid` are called in the [register.tsx](https://github.com/UnumID/Kredita-Demo-Web/blob/main/app/routes/register.tsx) file. 
+
 ## Development
 
 ### Getting Started
