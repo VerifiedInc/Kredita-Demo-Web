@@ -28,6 +28,12 @@ declare module '@mui/material/Typography' {
   }
 }
 
+declare module '@mui/material/styles' {
+  interface BreakpointOverrides {
+    largeMobile: true;
+  }
+}
+
 const typography = {
   fontFamily: 'Nunito',
   h1: {
@@ -300,4 +306,7 @@ export const theme = createTheme({
     },
   },
   typography,
+  breakpoints: {
+    values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536, largeMobile: 415 },
+  },
 });
