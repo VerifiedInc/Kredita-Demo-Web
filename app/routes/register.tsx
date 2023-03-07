@@ -64,7 +64,8 @@ export const action: ActionFunction = async ({ request }) => {
       // redirect the user to the url returned from the POST request to hasMatchingCredentials
       return redirect(String(url));
     }
-    return null;
+    // Alert for the purposes of the demo to inform users as to why the demo is not progressing
+    return json({ error: 'No matching credentials found.' });
   } catch (e) {
     return json({ error: getErrorMessage(e) }, { status: getErrorStatus(e) });
   }

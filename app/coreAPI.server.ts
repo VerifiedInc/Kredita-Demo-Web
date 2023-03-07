@@ -97,7 +97,7 @@ export const hasMatchingCredentials = async (
 
     if (result?.code) {
       logger.debug(
-        `No credentials issued for ${email}. Error: ${result.message}`
+        `No credentials matched for ${email}. Error: ${result.message}`
       );
       return null;
     }
@@ -106,7 +106,7 @@ export const hasMatchingCredentials = async (
 
     return result.url;
   } catch (e) {
-    logger.error(`issueCredentials for ${email} failed. Error: ${e}`);
+    logger.error(`hasMatchingCredentials for ${email} failed. Error: ${e}`);
     throw e;
   }
 };
