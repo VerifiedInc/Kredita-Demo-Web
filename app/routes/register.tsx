@@ -31,12 +31,11 @@ export const action: ActionFunction = async ({ request }) => {
   const email = formData.get('email');
   const phone = formData.get('phone');
 
-  if (!email) {
-    return json({ error: 'Email is required' }, { status: 400 });
-  }
-
-  if (!phone) {
-    return json({ error: 'Phone is required' }, { status: 400 });
+  if (!phone && !email) {
+    return json(
+      { error: 'Either phone or email must be populated' },
+      { status: 400 }
+    );
   }
 
   if (typeof email !== 'string' || typeof phone !== 'string') {
@@ -55,9 +54,9 @@ export const action: ActionFunction = async ({ request }) => {
       );
       logger.info(`URL: ${url}`);
       // user's email address
-      url.searchParams.set('email', email);
+      if (email) url.searchParams.set('email', email);
       // user's phone number
-      url.searchParams.set('phone', phone);
+      if (phone) url.searchParams.set('phone', phone);
       // url to redirect the user to once the Unum ID credential request flow is complete
       url.searchParams.set('redirectUrl', config.demoUrl + '/register');
 
