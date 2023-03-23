@@ -53,8 +53,8 @@ interface SharedCredentials {
  * @returns {Promise<string | null>} if a match for the request is found, returns the Unum ID Web Wallet url for redirect, if no match is found returns null
  */
 export const hasMatchingCredentials = async (
-  email?: string | undefined,
-  phone?: string | undefined
+  email?: string,
+  phone?: string
 ): Promise<string | null> => {
   if (!email && !phone) return null; // short circuit if neither email nor phone are provided
 
