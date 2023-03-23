@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  unumid: unumid/unumid-app-orb@0.5.1
+  unumid: unumid/unumid-app-orb@0.7.1
 
 workflows:
   lint-and-test:
@@ -46,7 +46,8 @@ workflows:
           account_id: '408067220840'
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'dev-account-customer-cluster'
+          cluster_name: 'dev-account-saas-cluster'
+          namespace: demos
           image_tag: 'dev-latest'
           filters:
             branches:
@@ -90,7 +91,8 @@ workflows:
           account_id: '032538391126'
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'sandbox-account-customer-cluster'
+          cluster_name: 'sandbox-account-saas-cluster'
+          namespace: demos
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
           filters:
@@ -134,7 +136,8 @@ workflows:
           account_id: '408067220840'
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'dev-account-customer-cluster'
+          cluster_name: 'dev-account-saas-cluster'
+          namespace: demos
           image_tag: 'test-latest'
           filters:
             branches:
