@@ -16,7 +16,7 @@ Because of this characteristic, even though this is a client side app, not all o
 
 The live web app can be found [here](https://kredita-web.demo.sandbox-unumid.co).
 
-The application's home page is a sample registration page. In order to "register", you will need to enter in the provided test email address and phone number. _These values are coming soon._
+The application's home page is a sample registration page. In order to "register", you will need to enter in the provided test email address (richard@piedpiper.net) and phone number (+10123456789). If you prefer, you may instead enter your own email address and/or phone number. For example, if you used your email address to issue credentials with the Hooli demo, that email (and the corresponding issued credentials) can be used here to register with Kredita. Ensure the value(s) you enter are valid as a OTP will be required at a later step.
 
 After you (the test user) click 'Register', the following occurs for Kredita to leverage your existing credentials.
 

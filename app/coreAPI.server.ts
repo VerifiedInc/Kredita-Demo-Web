@@ -53,8 +53,8 @@ interface SharedCredentials {
  * @returns {Promise<string | null>} if a match for the request is found, returns the Unum ID Web Wallet url for redirect, if no match is found returns null
  */
 export const hasMatchingCredentials = async (
-  email: string | undefined,
-  phone: string | undefined
+  email?: string,
+  phone?: string
 ): Promise<string | null> => {
   if (!email && !phone) return null; // short circuit if neither email nor phone are provided
 
@@ -65,6 +65,11 @@ export const hasMatchingCredentials = async (
 
   const credentialRequests: CredentialRequest[] = [
     {
+      type: 'FullNameCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
       type: 'EmailCredential',
       issuers: [], // any issuer accepted
       required: true,
@@ -74,13 +79,59 @@ export const hasMatchingCredentials = async (
       issuers: [], // any issuer accepted
       required: true,
     },
+    {
+      type: 'SexCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'DobCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'SsnCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'NationalityCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'GovernmentIdTypeCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'GovernmentIdStateCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'GovernmentIdNumberCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'GovernmentIdIssuanceDateCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
+    {
+      type: 'GovernmentIdExpirationDateCredential',
+      issuers: [], // any issuer accepted
+      required: false,
+    },
   ];
 
   const options: HasMatchingCredentialsOptions = {
-    email,
-    phone,
     credentialRequests,
   };
+
+  if (email) options.email = email;
+  if (phone) options.phone = phone;
 
   const body = JSON.stringify(options);
 
