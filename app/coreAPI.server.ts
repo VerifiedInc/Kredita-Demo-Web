@@ -77,7 +77,7 @@ export const hasMatchingCredentials = async (
     {
       type: 'PhoneCredential',
       issuers: [], // any issuer accepted
-      required: true,
+      required: false,
     },
     {
       type: 'SexCredential',
