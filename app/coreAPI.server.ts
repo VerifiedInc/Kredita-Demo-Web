@@ -155,7 +155,7 @@ export const hasMatchingCredentials = async (
 
     logger.info(`Has matching credentials? ${result.match}.`);
 
-    return result.url;
+    return result.match ? result.url : null;
   } catch (e) {
     logger.error(`hasMatchingCredentials for ${email} failed. Error: ${e}`);
     throw e;
