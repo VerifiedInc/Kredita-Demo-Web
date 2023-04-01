@@ -131,7 +131,7 @@ export const hasMatchingCredentials = async (
   };
 
   if (email) options.email = email;
-  if (phone) options.phone = phone;
+  if (phone) options.phone = phone?.startsWith('+1') ? phone : '+1' + phone;
 
   const body = JSON.stringify(options);
 
