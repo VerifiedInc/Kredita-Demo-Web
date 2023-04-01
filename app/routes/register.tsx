@@ -56,7 +56,11 @@ export const action: ActionFunction = async ({ request }) => {
       // user's email address
       if (email) url.searchParams.set('email', email);
       // user's phone number
-      if (phone) url.searchParams.set('phone', phone);
+      if (phone)
+        url.searchParams.set(
+          'phone',
+          phone?.startsWith('+1') ? phone : '+1' + phone
+        );
       // url to redirect the user to once the Unum ID credential request flow is complete
       url.searchParams.set('redirectUrl', config.demoUrl + '/register');
 
