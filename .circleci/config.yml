@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  unumid: unumid/unumid-app-orb@0.7.1
+  unumid: unumid/unumid-app-orb@0.9.0
 
 workflows:
   lint-and-test:
@@ -12,7 +12,7 @@ workflows:
             branches:
               ignore:
                 - main
-                - test-circleci
+
   build-and-deploy:
     jobs:
       - unumid/lint-and-test:
@@ -103,17 +103,8 @@ workflows:
 
   build-and-deploy-test:
     jobs:
-      - unumid/lint-and-test:
-          compile_script_name: 'build'
-          filters:
-            branches:
-              only:
-                - test-circleci
-
       - unumid/build-and-push-image:
           name: unumid/build-and-push-image-test
-          requires:
-            - unumid/lint-and-test
           context:
             - AWS-Root-Account
             - Slack-Context
