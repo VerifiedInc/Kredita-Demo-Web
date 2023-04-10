@@ -21,7 +21,7 @@ RUN --mount=type=ssh,id=github npm ci
 
 COPY ./ /app/
 
-RUN npm run compile
+RUN npm run build
 
 # remove local npm cache with "clean cache --force" because of the image's ummutable nature, no need for local cache (that lives in the image). Makes the overall image size smaller.
 RUN npm cache clean --force
