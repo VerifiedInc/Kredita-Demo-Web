@@ -153,8 +153,15 @@ export const hasMatchingCredentials = async (
       return null;
     }
 
-    logger.info(`Has matching credentials? ${result.match}.`);
+    logger.info(
+      `Has matching credentials? ${result.match}. ${
+        result.match
+          ? `Response wallet URL with for redirect: ${result.url}`
+          : ``
+      }`
+    );
 
+    // if there is a match then a url with the matching email and/or phone and a requestId query parameters will be returned
     return result.match ? result.url : null;
   } catch (e) {
     logger.error(`hasMatchingCredentials for ${email} failed. Error: ${e}`);
