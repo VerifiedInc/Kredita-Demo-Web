@@ -46,23 +46,16 @@ export const action: ActionFunction = async ({ request }) => {
     // Check whether the user has existing credentials
     const credentialRequestUrl = await hasMatchingCredentials(email, phone);
 
+    // if url is returned then there are matching credentials
     if (credentialRequestUrl) {
-      const url = new URL(
-        String(credentialRequestUrl).toLowerCase().includes('wallet')
-          ? credentialRequestUrl
-          : config.unumWalletUrl + credentialRequestUrl
-      );
-      logger.info(`URL: ${url}`);
-      // user's email address
-      if (email) url.searchParams.set('email', email);
-      // user's phone number
-      if (phone)
-        url.searchParams.set(
-          'phone',
-          phone?.startsWith('+1') ? phone : '+1' + phone
-        );
+      const url = new URL(String(credentialRequestUrl));
+
       // url to redirect the user to once the Unum ID credential request flow is complete
       url.searchParams.set('redirectUrl', config.demoUrl + '/register');
+
+      logger.info(
+        `final wallet URL including own callbackUrl aka redirectUrl defined: ${url}`
+      );
 
       // redirect the user to the url returned from the POST request to hasMatchingCredentials
       return redirect(String(url));
