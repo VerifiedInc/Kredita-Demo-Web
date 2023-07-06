@@ -78,7 +78,7 @@
     "@types/react-dom": "^18.0.8",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "@unumid/eslint-config-react": "github:UnumID/eslint-config-react#v1.0.2",
+    "@unumid/eslint-config-react": "github:UnumID/eslint-config-react#v1.0.4",
     "dotenv": "^16.0.3",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.6.0",
