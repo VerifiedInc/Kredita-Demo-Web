@@ -51,8 +51,7 @@ export function initSentry() {
     tracesSampleRate: 1.0, // opting to record 100% of all transactions in all envs for now
     // Session Replay
     // Capture 100% of the session replay other than production.
-    // Capture 10% of the session replay in production.
-    // replaysSessionSampleRate: browserConfig.env === 'production' ? 0.1 : 1.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+    // Capture 20% of the session replay in production.
     replaysSessionSampleRate: browserConfig.env === 'production' ? 0.2 : 1.0, // record 20% to production env and 100% to other envs.
     // Session Replay On Error
     // Capture 100% of the session replay.
