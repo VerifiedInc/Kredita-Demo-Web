@@ -6,6 +6,9 @@
   },
   "scripts": {
     "build": "remix build",
+    "build:sourcemap": "remix build --sourcemap",
+    "sentry:upload_sourcemaps": "node ./node_modules/@sentry/remix/scripts/sentry-upload-sourcemaps.js",
+    "delete_sourcemaps": "find ./public/build -type f -name '*.map' -delete && find ./build -type f -name '*.map' -delete",
     "dev": "remix build && run-p \"dev:*\"",
     "dev:node": "cross-env NODE_ENV=development nodemon --require dotenv/config ./server.js --watch ./server.js",
     "dev:remix": "remix watch",
