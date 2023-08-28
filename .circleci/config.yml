@@ -151,8 +151,6 @@ workflows:
                 - test-circleci
 
       - unumid/build-and-upload-sentry-sourcemaps:
-          requires:
-            - unumid/lint-and-test
           context:
             - Slack-Context
             - Sentry-Context
