@@ -4,6 +4,7 @@ dotenv.config();
 
 interface Config {
   NODE_ENV: string;
+  ENV: string;
   logRocketId: string;
   logRocketProjectName: string;
   logLevel: string;
@@ -16,10 +17,12 @@ interface Config {
   coreServiceUrl: string;
   unumWalletUrl: string;
   demoUrl: string;
+  sentryDSN: string;
 }
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
+  ENV: process.env.ENV || 'local',
   logRocketId: process.env.LOG_ROCKET_ID || '',
   logRocketProjectName: process.env.LOG_ROCKET_PROJECT_NAME || '',
   logLevel: process.env.LOG_LEVEL || 'debug',
@@ -32,4 +35,5 @@ export const config: Config = {
   coreServiceUrl: process.env.CORE_SERVICE_URL || '',
   unumWalletUrl: process.env.UNUM_WALLET_URL || '',
   demoUrl: process.env.DEMO_URL || '',
+  sentryDSN: process.env.SENTRY_DSN || '',
 };
