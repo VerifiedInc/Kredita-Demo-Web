@@ -48,9 +48,6 @@ export function initSentry() {
     ],
     ignoreErrors: ['query() call aborted', 'queryRoute() call aborted'],
     // Performance Monitoring
-    // Capture 100% of the transactions other than production.
-    // Capture 20% of the transactions in production.
-    // tracesSampleRate: browserConfig.env === 'production' ? 0.2 : 1.0,
     tracesSampleRate: 1.0, // opting to record 100% of all transactions in all envs for now
     // Session Replay
     // Capture 100% of the session replay other than production.
