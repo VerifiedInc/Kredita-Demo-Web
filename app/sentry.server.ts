@@ -13,8 +13,6 @@ export function initSentry() {
     integrations: [new Sentry.Integrations.Http({ tracing: true })],
     ignoreErrors: ['query() call aborted', 'queryRoute() call aborted'],
     // Performance Monitoring
-    // Capture 100% of the transactions other than production.
-    // Capture 20% of the transactions in production.
     tracesSampleRate: 1.0, // opting to record 100% of all transactions in all envs for now
   });
 }
