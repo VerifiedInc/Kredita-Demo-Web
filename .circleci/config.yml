@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  unumid: unumid/unumid-app-orb@0.9.0
+  unumid: unumid/unumid-app-orb@1.3.0
 
 workflows:
   lint-and-test:
@@ -32,6 +32,22 @@ workflows:
           repo: kredita-demo-web
           image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
           image_tag_2: dev-latest
+          filters:
+            branches:
+              only:
+                - main
+
+      - unumid/build-and-upload-sentry-sourcemaps:
+          requires:
+            - unumid/lint-and-test
+          context:
+            - Slack-Context
+            - Sentry-Context
+          script_name: sentry:upload_sourcemaps
+          compile_script_name: build:sourcemap
+          cache_version: v6
+          sentry_org: verified-inc
+          sentry_project: kredita-demo-web
           filters:
             branches:
               only:
@@ -81,6 +97,23 @@ workflows:
             branches:
               ignore: /.*/
 
+      - unumid/build-and-upload-sentry-sourcemaps:
+          requires:
+            - unumid/lint-and-test
+          context:
+            - Slack-Context
+            - Sentry-Context
+          script_name: sentry:upload_sourcemaps
+          compile_script_name: build:sourcemap
+          cache_version: v6
+          sentry_org: verified-inc
+          sentry_project: kredita-demo-web
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+/
+            branches:
+              ignore: /.*/
+
       - unumid/deploy-image:
           name: unumid/deploy-image-sandbox
           requires:
@@ -112,6 +145,20 @@ workflows:
           repo: kredita-demo-web
           image_tag_1: '${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}'
           image_tag_2: test-latest
+          filters:
+            branches:
+              only:
+                - test-circleci
+
+      - unumid/build-and-upload-sentry-sourcemaps:
+          context:
+            - Slack-Context
+            - Sentry-Context
+          script_name: sentry:upload_sourcemaps
+          compile_script_name: build:sourcemap
+          cache_version: v6
+          sentry_org: verified-inc
+          sentry_project: kredita-demo-web
           filters:
             branches:
               only:

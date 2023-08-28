@@ -32,12 +32,15 @@ import Layout from './Layout';
 interface BrowserEnv {
   logRocketId: string;
   logRocketProjectName: string;
+  sentryDSN: string;
+  release: string;
 }
 
 // add browser env to window
 declare global {
   interface Window {
     ENV: BrowserEnv;
+    sentryDSN: string;
   }
 }
 
@@ -81,13 +84,20 @@ export const links: LinksFunction = () => [
 
 export const loader: LoaderFunction = async ({ context }) => {
   const { cspNonce } = context;
-  const { logRocketId, logRocketProjectName } = config;
+  const { logRocketId, logRocketProjectName, ENV, sentryDSN, COMMIT_SHA } =
+    config;
 
   return json({
     cspNonce,
     // pass config/env vars we want to be available in the browser
     // ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
-    env: { logRocketId, logRocketProjectName },
+    env: {
+      logRocketId,
+      logRocketProjectName,
+      ENV,
+      sentryDSN,
+      release: COMMIT_SHA,
+    },
   });
 };
 

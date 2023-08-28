@@ -45,6 +45,7 @@ app.use(
           (_req, res) => `'nonce-${res.locals.cspNonce}'`,
           // LogRocket
           'https://*.lr-in-prod.com',
+          'https://*.sentry.io',
         ],
         'worker-src': ["'self'", 'blob:'],
         'connect-src': [
@@ -53,6 +54,7 @@ app.use(
           process.env.NODE_ENV === 'development' ? 'ws://localhost:8002' : '',
           // LogRocket
           'https://*.lr-in-prod.com',
+          'https://*.sentry.io',
         ],
       },
     },

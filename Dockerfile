@@ -21,7 +21,10 @@ RUN --mount=type=ssh,id=github npm ci
 
 COPY ./ /app/
 
-RUN npm run build
+# Remix generate different hashes for chunks with sourcemap flag on build.
+RUN npm run build:sourcemap
+# We must delete sourcemaps since is discouraged to keep them in production.
+RUN npm run delete_sourcemaps
 
 # remove local npm cache with "clean cache --force" because of the image's ummutable nature, no need for local cache (that lives in the image). Makes the overall image size smaller.
 RUN npm cache clean --force
