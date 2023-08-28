@@ -8,6 +8,8 @@ export function initSentry() {
   // Initialize Sentry on client side.
   // see docs: https://docs.sentry.io/platforms/javascript/guides/remix/#configure
   Sentry.init({
+    // We define a release on initialize so Sentry can know which release to use the sourcemap do show human-readable stack traces.
+    release: browserConfig.release,
     // Environment options are: local, development, sandbox and production
     environment: browserConfig.env,
     dsn: browserConfig.sentryDSN,

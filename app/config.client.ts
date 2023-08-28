@@ -2,6 +2,7 @@
 export interface BrowserConfig {
   env: string;
   sentryDSN: string;
+  release: string;
 }
 
 export const browserConfig: BrowserConfig =

@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
+import { execSync } from 'child_process';
 
 dotenv.config();
 
 interface Config {
+  COMMIT_SHA: string;
   NODE_ENV: string;
   ENV: string;
   logRocketId: string;
@@ -21,6 +23,7 @@ interface Config {
 }
 
 export const config: Config = {
+  COMMIT_SHA: execSync('git rev-parse --verify HEAD').toString().trim(),
   NODE_ENV: process.env.NODE_ENV || 'development',
   ENV: process.env.ENV || 'local',
   logRocketId: process.env.LOG_ROCKET_ID || '',

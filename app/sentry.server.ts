@@ -5,6 +5,8 @@ export function initSentry() {
   // Initialize Sentry on server side.
   // see docs: https://docs.sentry.io/platforms/javascript/guides/remix/#configure
   Sentry.init({
+    // We define a release on initialize so Sentry can know which release to use the sourcemap do show human-readable stack traces.
+    release: config.COMMIT_SHA,
     // Environment options are: local, development, sandbox and production
     environment: config.ENV,
     dsn: config.sentryDSN,
