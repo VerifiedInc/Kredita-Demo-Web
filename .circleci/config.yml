@@ -54,6 +54,7 @@ workflows:
                 - main
 
       - unumid/deploy-image:
+          name: unumid/deploy-image-dev
           requires:
             - unumid/build-and-push-image
           context:
@@ -62,9 +63,27 @@ workflows:
           account_id: '408067220840'
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'dev-account-saas-cluster'
+          cluster_name: dev-account-saas-cluster
           namespace: demos
-          image_tag: 'dev-latest'
+          image_tag: dev-latest
+          filters:
+            branches:
+              only:
+                - main
+
+      - unumid/deploy-image:
+          name: unumid/deploy-image-dev-1click
+          requires:
+            - unumid/build-and-push-image
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: '408067220840'
+          repo: kredita-demo-web
+          deployment: kredita-1click-demo-web
+          cluster_name: dev-account-saas-cluster
+          namespace: demos
+          image_tag: dev-latest
           filters:
             branches:
               only:
@@ -121,10 +140,30 @@ workflows:
           context:
             - AWS-Root-Account
             - Slack-Context
-          account_id: '032538391126'
+          account_id: 032538391126
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'sandbox-account-saas-cluster'
+          cluster_name: sandbox-account-saas-cluster
+          namespace: demos
+          image_tag: '${CIRCLE_TAG}'
+          slack_pass_notify_template: success_tagged_deploy_1
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+/
+            branches:
+              ignore: /.*/
+
+      - unumid/deploy-image:
+          name: unumid/deploy-image-sandbox-1click
+          requires:
+            - unumid/build-and-push-image-sandbox
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: 032538391126
+          repo: kredita-demo-web
+          deployment: kredita-1click-demo-web
+          cluster_name: sandbox-account-saas-cluster
           namespace: demos
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
@@ -174,9 +213,27 @@ workflows:
           account_id: '408067220840'
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: 'dev-account-saas-cluster'
+          cluster_name: dev-account-saas-cluster
           namespace: demos
-          image_tag: 'test-latest'
+          image_tag: test-latest
+          filters:
+            branches:
+              only:
+                - test-circleci
+
+      - unumid/deploy-image:
+          name: unumid/deploy-image-test-1click
+          requires:
+            - unumid/build-and-push-image-test
+          context:
+            - AWS-Root-Account
+            - Slack-Context
+          account_id: '408067220840'
+          repo: kredita-demo-web
+          deployment: kredita-1click-demo-web
+          cluster_name: dev-account-saas-cluster
+          namespace: demos
+          image_tag: test-latest
           filters:
             branches:
               only:
