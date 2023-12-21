@@ -15,7 +15,7 @@ export default function Layout({ children }: PropsWithChildren) {
           <img
             alt='black Kredita logo'
             src={KreditaLogo}
-            style={{ maxWidth: 29 }}
+            style={{ maxWidth: 80 }}
           />
         </Box>
         {children}

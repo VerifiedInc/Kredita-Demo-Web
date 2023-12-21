@@ -4,25 +4,21 @@ import {
   LoaderFunction,
   redirect,
 } from '@remix-run/node';
-import { Form, Link, useActionData } from '@remix-run/react';
+import { useActionData } from '@remix-run/react';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 
-import { red } from '~/styles/colors';
 import { createUserSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
 import { hasMatchingCredentials, sharedCredentials } from '~/coreAPI.server';
 import { config } from '~/config';
 import { logger } from '~/logger.server';
 
-import { theme } from '~/styles/theme';
 import LogInAndRegister from '~/images/log-in-and-register.png';
-import { Button } from '@mui/material';
 
-interface ActionData {
-  error?: string;
-}
+import { useIsOneClick } from '~/hooks/useIsOneClick';
+import { ActionData } from '~/features/register/types';
+import { RegularForm } from '~/features/register/components/RegularForm';
+import { OneClickForm } from '~/features/register/components/OneClickForm';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -89,6 +85,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Register() {
   const actionData: ActionData | undefined = useActionData<typeof action>();
+  const isOneClick = useIsOneClick();
 
   console.log('actionData', actionData);
   return (
@@ -98,36 +95,9 @@ export default function Register() {
       flexDirection='column'
       alignItems='center'
     >
-      <Typography variant='h1' mt={0} align='center'>
-        You're moments away from magic...
-      </Typography>
-      <Typography variant='h3' mt={4.5} fontWeight={400}>
-        Let's start with your contact info:
-      </Typography>
-      <Form method='post' style={{ width: '100%' }}>
-        <Box
-          component='section'
-          display='flex'
-          flexDirection='column'
-          alignItems='center'
-          mt={2}
-        >
-          <TextField label='Email' name='email' />
-          <TextField label='Phone' name='phone' sx={{ marginTop: 2 }} />
-          <Button>Next →</Button>
-          {actionData?.error && (
-            <Typography sx={{ marginTop: 2 }} color={red}>
-              {actionData?.error}
-            </Typography>
-          )}
-        </Box>
-      </Form>
-      <Typography variant='body2' mt={1.8} mb={4.5} color='neutral.dark'>
-        Already have an account?{' '}
-        <Link to='/login' style={{ color: theme.palette.neutral.dark }}>
-          Sign in
-        </Link>
-      </Typography>
+      {/* When is regular flow, render the default form */}
+      {!isOneClick && <RegularForm />}
+      {isOneClick && <OneClickForm />}
       <img
         alt='man at desk looking at a robot holding a clock'
         src={LogInAndRegister}

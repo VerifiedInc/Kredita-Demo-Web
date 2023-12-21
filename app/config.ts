@@ -20,6 +20,7 @@ interface Config {
   unumWalletUrl: string;
   demoUrl: string;
   sentryDSN: string;
+  oneClickEnabled: boolean;
 }
 
 export const config: Config = {
@@ -39,4 +40,5 @@ export const config: Config = {
   unumWalletUrl: process.env.UNUM_WALLET_URL || '',
   demoUrl: process.env.DEMO_URL || '',
   sentryDSN: process.env.SENTRY_DSN || '',
+  oneClickEnabled: Boolean(process.env.ONE_CLICK_ENABLED === 'true'),
 };

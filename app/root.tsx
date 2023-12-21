@@ -27,19 +27,13 @@ import ClientStyleContext from './context/ClientStyleContext';
 import { theme } from './styles/theme';
 import { getErrorMessage } from './errors';
 import Layout from './Layout';
-
-// encapsulates browser "env vars"
-interface BrowserEnv {
-  logRocketId: string;
-  logRocketProjectName: string;
-  sentryDSN: string;
-  release: string;
-}
+import { BrowserConfig } from './config.client';
+import { AppContextProvider } from './context/AppContext';
 
 // add browser env to window
 declare global {
   interface Window {
-    ENV: BrowserEnv;
+    ENV: BrowserConfig;
     sentryDSN: string;
   }
 }
@@ -84,8 +78,14 @@ export const links: LinksFunction = () => [
 
 export const loader: LoaderFunction = async ({ context }) => {
   const { cspNonce } = context;
-  const { logRocketId, logRocketProjectName, ENV, sentryDSN, COMMIT_SHA } =
-    config;
+  const {
+    logRocketId,
+    logRocketProjectName,
+    ENV,
+    sentryDSN,
+    COMMIT_SHA,
+    oneClickEnabled,
+  } = config;
 
   return json({
     cspNonce,
@@ -97,6 +97,7 @@ export const loader: LoaderFunction = async ({ context }) => {
       ENV,
       sentryDSN,
       release: COMMIT_SHA,
+      oneClickEnabled,
     },
   });
 };
@@ -104,7 +105,7 @@ export const loader: LoaderFunction = async ({ context }) => {
 interface DocumentProps {
   children: React.ReactNode;
   cspNonce: string;
-  env: BrowserEnv;
+  env: BrowserConfig;
 }
 
 // set up Emotion for mui styles
@@ -137,11 +138,13 @@ const Document = withEmotionCache(
           <Links />
         </head>
         <body>
-          <ThemeProvider theme={theme}>
-            <CssBaseline>
-              <Layout>{children}</Layout>
-            </CssBaseline>
-          </ThemeProvider>
+          <AppContextProvider config={env}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline>
+                <Layout>{children}</Layout>
+              </CssBaseline>
+            </ThemeProvider>
+          </AppContextProvider>
           {/*
             set browser env on window
             ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
