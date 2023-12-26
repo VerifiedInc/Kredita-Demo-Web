@@ -9,7 +9,11 @@ import Box from '@mui/material/Box';
 
 import { createUserSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
-import { hasMatchingCredentials, sharedCredentials } from '~/coreAPI.server';
+import {
+  hasMatchingCredentials,
+  oneClick,
+  sharedCredentials,
+} from '~/coreAPI.server';
 import { config } from '~/config';
 import { logger } from '~/logger.server';
 
@@ -24,42 +28,72 @@ import { OneClickForm } from '~/features/register/components/OneClickForm';
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
+  const action = formData.get('action');
   const email = formData.get('email');
   const phone = formData.get('phone');
 
-  if (!phone && !email) {
-    return json(
-      { error: 'Either phone or email must be populated' },
-      { status: 400 }
-    );
+  if (!action) {
+    return json({ error: 'Action must be populated' }, { status: 400 });
   }
 
-  if (typeof email !== 'string' || typeof phone !== 'string') {
-    return json({ error: 'Invalid form data' }, { status: 400 });
-  }
+  switch (action) {
+    case 'one-click': {
+      if (!phone) {
+        return json({ error: 'Phone must be populated' }, { status: 400 });
+      }
 
-  try {
-    // Check whether the user has existing credentials
-    const credentialRequestUrl = await hasMatchingCredentials(email, phone);
+      if (typeof phone !== 'string') {
+        return json({ error: 'Invalid form data' }, { status: 400 });
+      }
 
-    // if url is returned then there are matching credentials
-    if (credentialRequestUrl) {
-      const url = new URL(String(credentialRequestUrl));
-
-      // url to redirect the user to once the Unum ID credential request flow is complete
-      url.searchParams.set('redirectUrl', config.demoUrl + '/register');
-
-      logger.info(
-        `final wallet URL including own callbackUrl aka redirectUrl defined: ${url}`
-      );
-
-      // redirect the user to the url returned from the POST request to hasMatchingCredentials
-      return redirect(String(url));
+      try {
+        return await oneClick(phone);
+      } catch (e) {
+        return json(
+          { error: getErrorMessage(e) },
+          { status: getErrorStatus(e) }
+        );
+      }
     }
-    // Alert for the purposes of the demo to inform users as to why the demo is not progressing
-    return json({ error: 'No matching credentials found.' });
-  } catch (e) {
-    return json({ error: getErrorMessage(e) }, { status: getErrorStatus(e) });
+    case 'regular': {
+      if (!phone && !email) {
+        return json(
+          { error: 'Either phone or email must be populated' },
+          { status: 400 }
+        );
+      }
+
+      if (typeof email !== 'string' || typeof phone !== 'string') {
+        return json({ error: 'Invalid form data' }, { status: 400 });
+      }
+
+      try {
+        // Check whether the user has existing credentials
+        const credentialRequestUrl = await hasMatchingCredentials(email, phone);
+
+        // if url is returned then there are matching credentials
+        if (credentialRequestUrl) {
+          const url = new URL(String(credentialRequestUrl));
+
+          // url to redirect the user to once the Unum ID credential request flow is complete
+          url.searchParams.set('redirectUrl', config.demoUrl + '/register');
+
+          logger.info(
+            `final wallet URL including own callbackUrl aka redirectUrl defined: ${url}`
+          );
+
+          // redirect the user to the url returned from the POST request to hasMatchingCredentials
+          return redirect(String(url));
+        }
+        // Alert for the purposes of the demo to inform users as to why the demo is not progressing
+        return json({ error: 'No matching credentials found.' });
+      } catch (e) {
+        return json(
+          { error: getErrorMessage(e) },
+          { status: getErrorStatus(e) }
+        );
+      }
+    }
   }
 };
 
@@ -84,10 +118,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const actionData: ActionData | undefined = useActionData<typeof action>();
+  const actionData: ActionData | undefined = useActionData();
   const isOneClick = useIsOneClick();
 
   console.log('actionData', actionData);
+
   return (
     <Box
       component='main'
