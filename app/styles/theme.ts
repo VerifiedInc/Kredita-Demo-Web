@@ -235,6 +235,19 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           zIndex: 1305,
+          '& .MuiPaper-root': {
+            borderRadius: 30,
+          },
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          paddingLeft: 30,
+          paddingRight: 30,
+          paddingTop: 32,
+          paddingBottom: 32,
         },
       },
     },

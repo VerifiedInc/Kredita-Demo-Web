@@ -6,8 +6,12 @@ import { logger } from './logger.server';
  */
 export interface CredentialRequest {
   type: string; // type of credential data being requested
-  issuers: string[]; // list of acceptable brandIds; if empty all issuer brands are valid
+  issuers?: string[]; // list of acceptable brandIds; if empty all issuer brands are valid
   required?: boolean; // if a credential is required (default is true)
+  mandatory?: string; // if a credential is mandatory (default is yes)
+  description?: string; // description of the credential request
+  allowUserInput?: boolean; // if the user can input the credential data (default is false)
+  children?: CredentialRequest[]; // if the credential is a composite credential, the children credential requests
 }
 
 /**
@@ -17,6 +21,15 @@ export interface HasMatchingCredentialsOptions {
   email?: string; // user's email address
   phone?: string; // user's phone number
   credentialRequests: CredentialRequest[]; // Encodes which credentials are being asked for
+}
+
+export interface OneClickOptions {
+  phone: string;
+  content?: {
+    title?: string;
+    description?: string;
+  };
+  credentialRequests: CredentialRequest[]; // Encodes which credentials are being asked for 1-click
 }
 
 /**
@@ -42,7 +55,7 @@ interface SharedCredentials {
 }
 
 /**
- * Function to make POST request to Unum ID's Core Service API /hasMatchingCredentials endpoint. The intent is to check if
+ * Function to make POST request to Verified Inc.'s Core Service API /hasMatchingCredentials endpoint. The intent is to check if
  * a user already has the necessary email and phone credential to enable 1-click sign up.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
  * of the API key (unumAPIKey).
@@ -50,7 +63,7 @@ interface SharedCredentials {
  * Documentation: https://docs.unumid.co/api-overview#check-user-credentials
  * @param email
  * @param phone
- * @returns {Promise<string | null>} if a match for the request is found, returns the Unum ID Web Wallet url for redirect, if no match is found returns null
+ * @returns {Promise<string | null>} if a match for the request is found, returns the Verified Inc. Web Wallet url for redirect, if no match is found returns null
  */
 export const hasMatchingCredentials = async (
   email?: string,
@@ -170,7 +183,7 @@ export const hasMatchingCredentials = async (
 };
 
 /**
- * Function to make GET request to Unum ID's Core Service API /sharedCredentials/{uuid} endpoint. The intent is to retrieve
+ * Function to make GET request to Verified Inc.'s Core Service API /sharedCredentials/{uuid} endpoint. The intent is to retrieve
  * the credentials shared by the user after they've completed a credentials request.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
  * of the API key (unumAPIKey).
@@ -213,6 +226,125 @@ export const sharedCredentials = async (uuid: string) => {
     return result as SharedCredentials;
   } catch (e) {
     logger.error(`GET sharedCredentials for uuid: ${uuid} failed. Error: ${e}`);
+    throw e;
+  }
+};
+
+/**
+ * Function to make POST request to Verified Inc.'s Core Service API /1-click endpoint. The call
+ * sends an SMS containing a link to allow user to do 1-click sign up.
+ * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
+ * of the API key (unumAPIKey).
+ * 
+ * Documentation: https://docs.unumid.co/api-overview#one-click
+
+ * @param phone
+ * @returns {Promise<{string | null}>} Returns an url that leads to 1-click signup request page
+ */
+export const oneClick = async (
+  phone?: string
+): Promise<{ url: string; phone: string } | null> => {
+  if (!phone) return null; // short circuit if phone are not provided
+
+  const headers = {
+    Authorization: 'Bearer ' + config.unumAPIKey,
+    'Content-Type': 'application/json',
+  };
+
+  const credentialRequests: CredentialRequest[] = [
+    {
+      type: 'SsnCredential',
+      mandatory: 'yes',
+    },
+    {
+      type: 'FullNameCredential',
+      issuers: [],
+      mandatory: 'yes',
+      allowUserInput: true,
+      children: [
+        {
+          type: 'FirstNameCredential',
+          issuers: [],
+        },
+        {
+          type: 'LastNameCredential',
+          issuers: [],
+        },
+      ],
+    },
+    {
+      type: 'AddressCredential',
+      issuers: [],
+      description:
+        'The address is composed by city, state, country, zip code line 1',
+      mandatory: 'if_available',
+      allowUserInput: true,
+      children: [
+        {
+          type: 'Line1Credential',
+          issuers: [],
+        },
+        {
+          type: 'CityCredential',
+          issuers: [],
+        },
+        {
+          type: 'StateCredential',
+          issuers: [],
+        },
+        {
+          type: 'CountryCredential',
+          issuers: [],
+        },
+        {
+          type: 'ZipCodeCredential',
+          issuers: [],
+          description:
+            'Zip code is used to match your address with other information',
+        },
+      ],
+    },
+  ];
+
+  const options: OneClickOptions = {
+    phone,
+    credentialRequests,
+    content: {
+      title: 'Verify',
+      description: 'Make sure everything is correct: ',
+    },
+  };
+
+  if (phone) options.phone = phone?.startsWith('+1') ? phone : '+1' + phone;
+
+  const body = JSON.stringify(options);
+
+  try {
+    const response = await fetch(config.coreServiceUrl + '/1-click', {
+      method: 'POST',
+      headers,
+      body,
+    });
+    const result = await response.json();
+
+    if (!result?.url?.length) {
+      logger.debug(
+        `Phone invalid or unsupported ${phone}. Error: ${result.message}`
+      );
+
+      throw new Error('Phone invalid or unsupported. Please try again');
+    }
+
+    logger.info(
+      `1-click. ${
+        result.url ? `Response wallet URL with for redirect: ${result.url}` : ``
+      }`
+    );
+
+    // the url will contain link or not based on credential request configuration
+    return { url: result.url, phone };
+  } catch (e) {
+    logger.error(`oneClick for ${phone} failed. Error: ${e}`);
     throw e;
   }
 };
