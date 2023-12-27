@@ -107,6 +107,7 @@ workflows:
             - AWS-Root-Account
             - Slack-Context
           account_id_1: '032538391126'
+          account_id_2: '574388719779' # pushing to production account thanks to wanting to expose the 1click prefill demo to the world
           repo: kredita-demo-web
           image_tag_1: '${CIRCLE_TAG}'
           image_tag_2: sandbox-latest
