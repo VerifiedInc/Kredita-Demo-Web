@@ -109,8 +109,17 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (sharedCredentialsUuid) {
     const result = await sharedCredentials(sharedCredentialsUuid);
     if (result) {
-      const { email } = result;
-      return createUserSession(request, String(email), '/verified');
+      const { credentials } = result;
+      const fullNameCredential = credentials.find(
+        (credential) => credential.type === 'FullNameCredential'
+      ) as any;
+      if (!fullNameCredential) {
+        throw new Error('FullNameCredential is missing');
+      }
+      const fullName = fullNameCredential.data
+        .map((credential: any) => Object.values(credential.data)[0])
+        .join(' ');
+      return createUserSession(request, String(fullName), '/verified');
     }
   }
 

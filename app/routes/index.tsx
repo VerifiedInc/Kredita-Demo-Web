@@ -9,7 +9,7 @@ import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
 import IconBoxAndLabel from '~/components/IconBoxAndLabel';
 import SpendSummary from '~/components/SpendSummary';
-import { logout, requireUserEmail } from '~/session.server';
+import { logout, requireUserName } from '~/session.server';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -19,10 +19,10 @@ export const action: ActionFunction = async ({ request }) => {
 // The exported `loader` function will be called when the route makes a GET request, i.e. when it is rendered
 export const loader: LoaderFunction = async ({ request }) => {
   // requireUser will redirect to the login page if the user is not logged in
-  const email = await requireUserEmail(request);
+  const name = await requireUserName(request);
 
   // return the user to the route, so it can be displayed
-  return json({ email });
+  return json({ name });
 };
 
 export default function Index() {
