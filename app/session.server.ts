@@ -21,8 +21,8 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
-// key for getting/setting the user email in the session
-const USER_SESSION_KEY = 'userEmail';
+// key for getting/setting the user name in the session
+const USER_SESSION_KEY = 'userName';
 
 /**
  * Gets the session from the request
@@ -39,12 +39,10 @@ export const getSession = async (request: Request) => {
  * @param {Request} request
  * @returns {Promise<string | null>} user
  */
-export const getUserEmail = async (
-  request: Request
-): Promise<string | null> => {
+export const getUserName = async (request: Request): Promise<string | null> => {
   const session = await getSession(request);
-  const email = session.get(USER_SESSION_KEY);
-  return email;
+  const name = session.get(USER_SESSION_KEY);
+  return name;
 };
 
 /**
@@ -64,15 +62,15 @@ export const logout = async (request: Request) => {
 };
 
 /**
- * Requires an authenticated user w/ email to be in the session for a request
+ * Requires an authenticated user w/ name to be in the session for a request
  * logs out if no user is found
  * @param {Request} request
- * @returns {Promise<string>} email
+ * @returns {Promise<string>} name
  */
-export const requireUserEmail = async (request: Request): Promise<string> => {
-  const email = await getUserEmail(request);
+export const requireUserName = async (request: Request): Promise<string> => {
+  const name = await getUserName(request);
 
-  if (email) return email;
+  if (name) return name;
 
   throw await logout(request);
 };
@@ -84,11 +82,11 @@ export const requireUserEmail = async (request: Request): Promise<string> => {
  */
 export const createUserSession = async (
   request: Request,
-  email: string,
+  name: string,
   redirectTo = '/'
 ) => {
   const session = await getSession(request);
-  session.set(USER_SESSION_KEY, email);
+  session.set(USER_SESSION_KEY, name);
   return redirect(redirectTo, {
     headers: {
       'Set-Cookie': await sessionStorage.commitSession(session),
