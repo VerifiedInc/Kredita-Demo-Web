@@ -29,7 +29,7 @@ export interface OneClickOptions {
     title?: string;
     description?: string;
   };
-  credentialRequests: CredentialRequest[]; // Encodes which credentials are being asked for 1-click
+  credentialRequests?: CredentialRequest[]; // Encodes which credentials are being asked for 1-click
 }
 
 /**
@@ -251,64 +251,8 @@ export const oneClick = async (
     'Content-Type': 'application/json',
   };
 
-  const credentialRequests: CredentialRequest[] = [
-    {
-      type: 'SsnCredential',
-      mandatory: 'yes',
-    },
-    {
-      type: 'FullNameCredential',
-      issuers: [],
-      mandatory: 'yes',
-      allowUserInput: true,
-      children: [
-        {
-          type: 'FirstNameCredential',
-          issuers: [],
-        },
-        {
-          type: 'LastNameCredential',
-          issuers: [],
-        },
-      ],
-    },
-    {
-      type: 'AddressCredential',
-      issuers: [],
-      description:
-        'The address is composed by city, state, country, zip code line 1',
-      mandatory: 'if_available',
-      allowUserInput: true,
-      children: [
-        {
-          type: 'Line1Credential',
-          issuers: [],
-        },
-        {
-          type: 'CityCredential',
-          issuers: [],
-        },
-        {
-          type: 'StateCredential',
-          issuers: [],
-        },
-        {
-          type: 'CountryCredential',
-          issuers: [],
-        },
-        {
-          type: 'ZipCodeCredential',
-          issuers: [],
-          description:
-            'Zip code is used to match your address with other information',
-        },
-      ],
-    },
-  ];
-
   const options: OneClickOptions = {
     phone,
-    credentialRequests,
     content: {
       title: 'Verify',
       description: 'Make sure everything is correct: ',
