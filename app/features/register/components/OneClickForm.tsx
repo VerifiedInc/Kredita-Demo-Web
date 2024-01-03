@@ -100,7 +100,7 @@ export function OneClickForm() {
           target='_blank'
           style={{ color: theme.palette.primary.main }}
         >
-          Term of Use
+          Terms of Use
         </Link>{' '}
         <br /> and acknowledge our{' '}
         <Link
