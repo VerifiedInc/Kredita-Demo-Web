@@ -35,7 +35,11 @@ app.use(
         'manifest-src': ["'self'"],
         'style-src': ["'self'", "'unsafe-inline'", 'https:'],
         'font-src': ["'self'", 'https:'],
-        'frame-ancestors': ["'self'"],
+        'frame-ancestors': [
+          "'self'",
+          'https://docs.verified.inc',
+          'http://localhost:*',
+        ],
         'base-uri': ["'self'"],
         'img-src': ["'self'", 'data:', 'https:'],
         'form-action': ["'self'"],
