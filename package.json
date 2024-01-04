@@ -1,7 +1,7 @@
 {
   "sideEffects": false,
   "engines": {
-    "node": "20.10.0-alpine",
+    "node": "20.10.0",
     "npm": "9.5.0"
   },
   "scripts": {
