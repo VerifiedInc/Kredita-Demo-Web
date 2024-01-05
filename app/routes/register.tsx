@@ -47,7 +47,11 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       try {
-        return await oneClick(phone);
+        const result = await oneClick(phone);
+
+        logger.info(`oneClick result: ${JSON.stringify(result)}`);
+
+        return { ...result, success: true };
       } catch (e) {
         return json(
           { error: getErrorMessage(e) },

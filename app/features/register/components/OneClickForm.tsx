@@ -15,7 +15,6 @@ export function OneClickForm() {
   const [count, setCount] = useState<number>(0);
 
   const validation = phoneSchema.safeParse(value);
-  const isValid = validation.success;
   const errorMessage = !validation.success
     ? validation?.error?.format()?._errors?.[0]
     : null;
@@ -26,14 +25,33 @@ export function OneClickForm() {
   const fetcherData = fetcher.data;
   const phone = fetcherData?.phone ?? null;
   const error = fetcherData?.error;
+  const isSuccess = fetcherData?.success ?? false;
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  // Submit form when is valid
-  useEffect(() => {
-    if (!isValid) return;
-    fetcherSubmit(formRef.current);
-  }, [isValid, fetcherSubmit]);
+  const handlePhoneChange = (value: string) => {
+    setValue(value);
+    setTouched(true);
+
+    const validation = phoneSchema.safeParse(value);
+    const isValid = validation.success;
+
+    // Short-circuit if is not valid or is already fetching
+    if (!isValid || isFetching) return;
+
+    // HACK-alert
+    // phone input uses another input to hold original value,
+    // as the form submits on change event of the masked input,
+    // we have to wait the next tick to have the unmasked input value set on the form.
+    setTimeout(() => {
+      console.log('form is valid, fetching now...');
+      fetcherSubmit(formRef.current, { method: 'post' });
+    }, 10);
+  };
+
+  if (isSuccess) {
+    console.log('response is successfull', fetcherData);
+  }
 
   // Reset form when is not fetching
   useEffect(() => {
@@ -72,10 +90,7 @@ export function OneClickForm() {
             name='phone'
             autoFocus
             value={value}
-            onChange={(value) => {
-              setValue(value);
-              setTouched(true);
-            }}
+            onChange={handlePhoneChange}
             error={touched && !!errorMessage}
             helperText={(touched && errorMessage) || undefined}
             disabled={isFetching}
@@ -112,7 +127,7 @@ export function OneClickForm() {
         </Link>
         .
       </Typography>
-      <Dialog open={!!fetcherData && !error}>
+      <Dialog open={isSuccess}>
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>
             Please click the verification link we just texted to <br />
