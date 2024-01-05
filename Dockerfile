@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.0.0-experimental
 # Stage 0, "build-stage" to build and compile the frontend
-FROM node:18.15.0-alpine as build-stage
+FROM node:20.10.0-alpine as build-stage
 
 # ref: https://medium.com/@nodepractices/docker-best-practices-with-node-js-e044b78d8f67
 
