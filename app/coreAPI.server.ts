@@ -254,7 +254,7 @@ export const oneClick = async (
   const options: OneClickOptions = {
     phone,
     content: {
-      title: 'Verify',
+      title: 'Signup',
       description: 'Make sure everything is correct: ',
     },
   };
