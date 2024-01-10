@@ -86,7 +86,7 @@ export default function Index() {
         </IconBoxAndLabel>
       </Box>
       <Form method='post'>
-        <Button>Logout</Button>
+        <Button>Sign Out</Button>
       </Form>
     </Box>
   );
