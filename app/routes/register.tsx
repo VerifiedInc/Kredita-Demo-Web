@@ -37,6 +37,9 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   switch (action) {
+    case 'reset': {
+      return null;
+    }
     case 'one-click': {
       if (!phone) {
         return json({ error: 'Phone must be populated' }, { status: 400 });

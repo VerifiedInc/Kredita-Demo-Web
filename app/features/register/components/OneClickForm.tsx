@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useFetcher } from '@remix-run/react';
-import { Box, Dialog, DialogContent, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { red } from '@mui/material/colors';
 import parsePhoneNumber from 'libphonenumber-js';
 
@@ -8,6 +15,7 @@ import { theme } from '~/styles/theme';
 import { phoneSchema } from '~/validations/phone.schema';
 
 import PhoneInput from '~/components/PhoneInput';
+import { ArrowBack } from '@mui/icons-material';
 
 export function OneClickForm() {
   const [value, setValue] = useState<string>('');
@@ -24,6 +32,7 @@ export function OneClickForm() {
   const fetcherSubmit = fetcher.submit;
   const fetcherData = fetcher.data;
   const phone = fetcherData?.phone ?? null;
+  const phoneRef = useRef<string | null>(fetcherData?.phone ?? null);
   const error = fetcherData?.error;
   const isSuccess = fetcherData?.success ?? false;
 
@@ -49,10 +58,6 @@ export function OneClickForm() {
     }, 10);
   };
 
-  if (isSuccess) {
-    console.log('response is successfull', fetcherData);
-  }
-
   // Reset form when is not fetching
   useEffect(() => {
     if (isFetching) return;
@@ -61,6 +66,12 @@ export function OneClickForm() {
     setTouched(false);
     setCount((prev) => prev + 1);
   }, [isFetching]);
+
+  if (isSuccess) {
+    console.log('response is successfull', fetcherData);
+    // Assign fone to ref so we can use it in the dialog without flikering when fetcherData is null.
+    phoneRef.current = phone;
+  }
 
   return (
     <>
@@ -131,8 +142,29 @@ export function OneClickForm() {
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>
             Please click the verification link we just texted to <br />
-            {parsePhoneNumber(phone ?? '')?.formatNational?.() ?? phone}
+            {parsePhoneNumber(phoneRef.current ?? '')?.formatNational?.() ??
+              phoneRef.current}
           </Typography>
+          <Stack justifyContent='center' mt={3}>
+            <Button
+              onClick={() => {
+                const formData = new FormData();
+                formData.set('action', 'reset');
+                fetcher.submit(formData, { method: 'post' });
+              }}
+              variant='outlined'
+              size='small'
+              startIcon={<ArrowBack sx={{ width: 24, height: 24 }} />}
+              sx={{
+                alignSelf: 'center',
+                py: 1,
+                px: 2,
+                fontSize: '1rem',
+              }}
+            >
+              Re-Enter Phone
+            </Button>
+          </Stack>
         </DialogContent>
       </Dialog>
     </>

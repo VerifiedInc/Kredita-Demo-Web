@@ -304,6 +304,12 @@ export const theme = createTheme({
           textTransform: 'none',
           borderRadius: 30,
         },
+        outlined: {
+          borderWidth: 2,
+          '&:hover': {
+            borderWidth: 2,
+          },
+        },
       },
       defaultProps: {
         size: 'large',
