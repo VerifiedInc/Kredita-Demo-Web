@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useFetcher } from '@remix-run/react';
+import { Link, useFetcher, useSearchParams } from '@remix-run/react';
 import {
   Box,
   Button,
@@ -21,6 +21,9 @@ export function OneClickForm() {
   const [value, setValue] = useState<string>('');
   const [touched, setTouched] = useState<boolean>(false);
   const [count, setCount] = useState<number>(0);
+
+  const [searchParams] = useSearchParams();
+  const isRedirect = searchParams.get('redirect') === 'true';
 
   const validation = phoneSchema.safeParse(value);
   const errorMessage = !validation.success
@@ -138,7 +141,7 @@ export function OneClickForm() {
         </Link>
         .
       </Typography>
-      <Dialog open={isSuccess}>
+      <Dialog open={!isRedirect && isSuccess}>
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>
             Please click the verification link we just texted to <br />

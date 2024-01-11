@@ -30,6 +30,7 @@ export interface OneClickOptions {
     description?: string;
   };
   credentialRequests?: CredentialRequest[]; // Encodes which credentials are being asked for 1-click
+  verificationOptions?: 'only_link' | 'only_code' | 'both_link_and_code';
 }
 
 /**
@@ -239,12 +240,16 @@ export const sharedCredentials = async (uuid: string) => {
  * Documentation: https://docs.unumid.co/api-overview#one-click
 
  * @param phone
- * @returns {Promise<{string | null}>} Returns an url that leads to 1-click signup request page
+ * @returns {Promise<{ url: string; phone: string }>} Returns an url that leads to 1-click signup request page
  */
 export const oneClick = async (
-  phone?: string
-): Promise<{ url: string; phone: string } | null> => {
-  if (!phone) return null; // short circuit if phone are not provided
+  phone?: string,
+  oneClickOptions?: Partial<OneClickOptions>
+): Promise<{ url: string; phone: string }> => {
+  // short circuit if phone are not provided
+  if (!phone) {
+    throw new Error('Phone was not provided');
+  }
 
   const headers = {
     Authorization: 'Bearer ' + config.unumAPIKey,
@@ -257,6 +262,7 @@ export const oneClick = async (
       title: 'Signup',
       description: 'Make sure everything is correct: ',
     },
+    ...oneClickOptions,
   };
 
   if (phone) options.phone = phone?.startsWith('+1') ? phone : '+1' + phone;
