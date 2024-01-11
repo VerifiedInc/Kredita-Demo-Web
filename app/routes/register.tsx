@@ -26,11 +26,15 @@ import { OneClickForm } from '~/features/register/components/OneClickForm';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchParams = new URLSearchParams(url.searchParams);
   const formData = await request.formData();
 
   const action = formData.get('action');
   const email = formData.get('email');
   const phone = formData.get('phone');
+
+  const isRedirect = searchParams.get('redirect') === 'true';
 
   if (!action) {
     return json({ error: 'Action must be populated' }, { status: 400 });
@@ -50,10 +54,19 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       try {
-        const result = await oneClick(phone);
+        const result = await oneClick(
+          phone,
+          isRedirect ? { verificationOptions: 'only_code' } : undefined
+        );
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
 
+        // Redirect user if query param is set.
+        if (isRedirect) {
+          return redirect(result.url);
+        }
+
+        // Otherwise, display on UI the success message.
         return { ...result, success: true };
       } catch (e) {
         return json(
