@@ -76,6 +76,14 @@ export function OneClickForm() {
     phoneRef.current = phone;
   }
 
+  useEffect(() => {
+    if (!isRedirect) {
+      sessionStorage.removeItem('redirect');
+      return;
+    }
+    sessionStorage.setItem('redirect', 'true');
+  }, [isRedirect]);
+
   return (
     <>
       <Typography variant='h1' mt={0} align='center'>

@@ -51,10 +51,10 @@ export const getUserName = async (request: Request): Promise<string | null> => {
  * @param {Request} request
  * @returns {Promise<Response>} response
  */
-export const logout = async (request: Request) => {
+export const logout = async (request: Request, redirectUrl?: string) => {
   console.log('logout');
   const session = await getSession(request);
-  return redirect('/register', {
+  return redirect(redirectUrl || '/register', {
     headers: {
       'Set-Cookie': await sessionStorage.destroySession(session),
     },
@@ -68,11 +68,16 @@ export const logout = async (request: Request) => {
  * @returns {Promise<string>} name
  */
 export const requireUserName = async (request: Request): Promise<string> => {
+  const url = new URL(request.url);
+  const searchParams = new URLSearchParams(url.searchParams);
   const name = await getUserName(request);
 
   if (name) return name;
 
-  throw await logout(request);
+  throw await logout(
+    request,
+    `/register${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+  );
 };
 
 /**

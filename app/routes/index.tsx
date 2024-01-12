@@ -13,7 +13,12 @@ import { logout, requireUserName } from '~/session.server';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
-  return logout(request);
+  const formData = await request.formData();
+  const hasRedirectParam = formData.get('redirect') === 'true';
+  return logout(
+    request,
+    hasRedirectParam ? '/register?redirect=true' : undefined
+  );
 };
 
 // The exported `loader` function will be called when the route makes a GET request, i.e. when it is rendered
@@ -27,6 +32,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
   const borderRadius = 30;
+  const hasRedirect =
+    typeof window !== 'undefined' &&
+    sessionStorage.getItem('redirect') === 'true';
 
   return (
     <Box
@@ -86,6 +94,7 @@ export default function Index() {
         </IconBoxAndLabel>
       </Box>
       <Form method='post'>
+        <input name='redirect' value={String(hasRedirect)} readOnly hidden />
         <Button>Sign Out</Button>
       </Form>
     </Box>

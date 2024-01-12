@@ -16,10 +16,14 @@ import { Refresh } from '@mui/icons-material';
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const action = formData.get('action');
+  const hasRedirectParam = formData.get('redirect') === 'true';
 
   switch (action) {
     case 'logout': {
-      return logout(request);
+      return logout(
+        request,
+        hasRedirectParam ? '/register?redirect=true' : undefined
+      );
     }
     default: {
       return redirect('/');
@@ -38,6 +42,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Verified() {
   const { name } = useLoaderData<typeof loader>();
+  const hasRedirect =
+    typeof window !== 'undefined' &&
+    sessionStorage.getItem('redirect') === 'true';
 
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>
@@ -67,6 +74,7 @@ export default function Verified() {
       </Form>
       <Form method='post'>
         <input name='action' value='logout' readOnly hidden />
+        <input name='redirect' value={String(hasRedirect)} readOnly hidden />
         <Button
           variant='outlined'
           size='small'
