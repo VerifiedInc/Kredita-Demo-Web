@@ -140,7 +140,11 @@ export const loader: LoaderFunction = async ({ request }) => {
         .map((credential: any) => Object.values(credential.data)[0])
         .slice(0, 1)
         .join(' ');
-      return createUserSession(request, String(fullName), '/verified');
+      return createUserSession(
+        request,
+        String(fullName),
+        `/verified?${searchParams.toString()}`
+      );
     }
   }
 
