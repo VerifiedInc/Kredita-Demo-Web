@@ -131,7 +131,7 @@ export function OneClickForm() {
         color='neutral.main'
         sx={{ textAlign: 'center' }}
       >
-        By using Kredita, you agree to our{' '}
+        By using this Kredita demo, you agree to Verified Inc.‘s{' '}
         <Link
           to='https://www.verified.inc/legal#terms-of-use'
           target='_blank'
