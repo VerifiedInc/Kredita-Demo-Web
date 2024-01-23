@@ -5,6 +5,7 @@ export type Brand = {
   uuid: string;
   name: string;
   logo: string;
+  homepageUrl: string;
   theme: {
     light: string;
     main: string;
@@ -18,6 +19,7 @@ export function getBrand(brandDto: BrandDto | null): Brand {
       uuid: '_',
       name: 'Kredita',
       logo: '/logo192.webp',
+      homepageUrl: '/',
       theme: {
         light: '#FACE6F',
         main: '#FFAD00',
@@ -30,6 +32,7 @@ export function getBrand(brandDto: BrandDto | null): Brand {
     uuid: brandDto.uuid,
     name: brandDto.receiverName,
     logo: brandDto.logoImageUrl,
+    homepageUrl: brandDto.homepageUrl,
     theme: {
       light: tinycolor(brandDto.primaryColor).lighten(20).toString(),
       main: brandDto.primaryColor,

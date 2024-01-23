@@ -303,6 +303,7 @@ export type BrandDto = {
   uuid: string;
   receiverName: string;
   logoImageUrl: string;
+  homepageUrl: string;
   primaryColor: string;
 };
 
@@ -316,6 +317,7 @@ const mapBrandDto = (brandDto: any): BrandDto => ({
   uuid: brandDto.uuid,
   receiverName: brandDto.receiverName,
   logoImageUrl: brandDto.logoImageUrl,
+  homepageUrl: brandDto.homepageUrl,
   primaryColor: brandDto.primaryColor,
 });
 export const getBrandDto = async (

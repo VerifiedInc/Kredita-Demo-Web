@@ -48,6 +48,32 @@ export default function Verified() {
     typeof window !== 'undefined' &&
     sessionStorage.getItem('redirect') === 'true';
 
+  const renderGoHomeButton = () => {
+    const buttonProps = {
+      sx: {
+        mt: 3,
+        py: 2,
+        px: 3.5,
+        fontSize: '1.4rem',
+      },
+      children: 'Go to Home',
+    };
+
+    if (brand.homepageUrl) {
+      return (
+        <Button href={brand.homepageUrl} {...buttonProps}>
+          Go to Home
+        </Button>
+      );
+    }
+
+    return (
+      <Form method='post'>
+        <Button {...buttonProps}>Go to Home</Button>
+      </Form>
+    );
+  };
+
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>
       <Typography variant='h1' align='center' mt={-2}>
@@ -62,18 +88,7 @@ export default function Verified() {
       >
         You're verified and signed up.
       </Typography>
-      <Form method='post'>
-        <Button
-          sx={{
-            mt: 3,
-            py: 2,
-            px: 3.5,
-            fontSize: '1.4rem',
-          }}
-        >
-          Go to Home
-        </Button>
-      </Form>
+      {renderGoHomeButton()}
       <Form method='post'>
         <input name='action' value='logout' readOnly hidden />
         <input name='redirect' value={String(hasRedirect)} readOnly hidden />
