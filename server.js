@@ -42,7 +42,7 @@ app.use(
           'http://localhost:*',
         ],
         'base-uri': ["'self'"],
-        'img-src': ["'self'", "'unsafe-inline'", 'data:', 'https:'],
+        'img-src': ["'self'", "'self'", 'data:', 'https:'],
         'form-action': ["'self'"],
         'script-src': [
           "'self'",
