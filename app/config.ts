@@ -21,6 +21,7 @@ interface Config {
   demoUrl: string;
   sentryDSN: string;
   oneClickEnabled: boolean;
+  coreServiceAdminAuthKey: string;
 }
 
 export const config: Config = {
@@ -41,4 +42,5 @@ export const config: Config = {
   demoUrl: process.env.DEMO_URL || '',
   sentryDSN: process.env.SENTRY_DSN || '',
   oneClickEnabled: Boolean(process.env.ONE_CLICK_ENABLED === 'true'),
+  coreServiceAdminAuthKey: process.env.CORE_SERVICE_ADMIN_AUTH_KEY || '',
 };

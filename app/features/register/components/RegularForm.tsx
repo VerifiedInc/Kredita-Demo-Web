@@ -1,13 +1,13 @@
 import { Form, Link, useActionData } from '@remix-run/react';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Box, TextField, Button, Typography, useTheme } from '@mui/material';
 import { red } from '@mui/material/colors';
 
-import { theme } from '~/styles/theme';
 import { action } from '~/routes';
 import { ActionData } from '../types';
 
 export function RegularForm() {
   const actionData: ActionData | undefined = useActionData<typeof action>();
+  const theme = useTheme();
 
   return (
     <>

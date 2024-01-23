@@ -29,6 +29,8 @@ import { getErrorMessage } from './errors';
 import Layout from './Layout';
 import { BrowserConfig } from './config.client';
 import { AppContextProvider } from './context/AppContext';
+import { getBrandDto } from './coreAPI.server';
+import { Brand, getBrand } from './utils/getBrand';
 
 // add browser env to window
 declare global {
@@ -40,21 +42,10 @@ declare global {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Kredita Demo',
   viewport: 'width=device-width,initial-scale=1',
 });
 
 export const links: LinksFunction = () => [
-  // icons
-  {
-    rel: 'icon',
-    href: '/favicon.ico',
-    type: 'image/x-icon',
-  },
-  {
-    rel: 'apple-touch-icon',
-    href: '/logo192.webp',
-  },
   // manifest
   {
     rel: 'manifest',
@@ -76,7 +67,16 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const loader: LoaderFunction = async ({ context }) => {
+export const loader: LoaderFunction = async ({ context, request }) => {
+  const url = new URL(request.url);
+  const searchParams = new URLSearchParams(url.searchParams);
+  const brandUuid = searchParams.get('brand');
+  const brand: Brand = getBrand(
+    brandUuid
+      ? await getBrandDto(brandUuid, config.coreServiceAdminAuthKey)
+      : null
+  );
+
   const { cspNonce } = context;
   const {
     logRocketId,
@@ -99,6 +99,7 @@ export const loader: LoaderFunction = async ({ context }) => {
       release: COMMIT_SHA,
       oneClickEnabled,
     },
+    brand,
   });
 };
 
@@ -106,12 +107,13 @@ interface DocumentProps {
   children: React.ReactNode;
   cspNonce: string;
   env: BrowserConfig;
+  brand: Brand;
 }
 
 // set up Emotion for mui styles
 // ref: https://github.com/mui/material-ui/blob/master/examples/remix-with-typescript/app/root.tsx
 const Document = withEmotionCache(
-  ({ children, cspNonce, env }: DocumentProps, emotionCache) => {
+  ({ children, cspNonce, env, brand }: DocumentProps, emotionCache) => {
     const clientStyleData = useContext(ClientStyleContext);
 
     // only executed on client
@@ -133,13 +135,19 @@ const Document = withEmotionCache(
     return (
       <html lang='en'>
         <head>
-          <meta name='theme-color' content={theme.palette.primary.main} />
+          <meta name='theme-color' content={brand.theme.main} />
+          <title>{brand.name + ' Demo'}</title>
+          <link
+            rel='icon'
+            href={`/favicon?brand=${brand.uuid}`}
+            type='image/x=icon'
+          />
           <Meta />
           <Links />
         </head>
         <body>
           <AppContextProvider config={env}>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme(brand.theme)}>
               <CssBaseline>
                 <Layout>{children}</Layout>
               </CssBaseline>
@@ -189,7 +197,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
 }
 
 export default function App() {
-  let { cspNonce, env } = useLoaderData<typeof loader>();
+  let { cspNonce, env, brand } = useLoaderData<typeof loader>();
 
   // fixes an issue with the nonce being reapplied on client hydration, and every time the loader is called
   // ref: https://github.com/remix-run/remix/issues/183
@@ -203,7 +211,7 @@ export default function App() {
   }, []);
 
   return (
-    <Document cspNonce={cspNonce} env={env}>
+    <Document cspNonce={cspNonce} env={env} brand={brand}>
       <Outlet />
     </Document>
   );

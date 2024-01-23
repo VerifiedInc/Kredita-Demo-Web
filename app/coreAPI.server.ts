@@ -298,3 +298,51 @@ export const oneClick = async (
     throw e;
   }
 };
+
+export type BrandDto = {
+  uuid: string;
+  receiverName: string;
+  logoImageUrl: string;
+  primaryColor: string;
+};
+
+/**
+ * Get a brand DTO by uuid.
+ * @param brandUuid Brand uuid.
+ * @param accessToken Access token to access core service API.
+ * @returns
+ */
+const mapBrandDto = (brandDto: any): BrandDto => ({
+  uuid: brandDto.uuid,
+  receiverName: brandDto.receiverName,
+  logoImageUrl: brandDto.logoImageUrl,
+  primaryColor: brandDto.primaryColor,
+});
+export const getBrandDto = async (
+  brandUuid: string,
+  accessToken: string
+): Promise<BrandDto | null> => {
+  try {
+    const headers = {
+      Authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(
+      config.coreServiceUrl + `/brands/${brandUuid}`,
+      {
+        method: 'GET',
+        headers,
+      }
+    );
+
+    if (!response.ok) return null;
+
+    const result = await response.json();
+
+    return mapBrandDto(result);
+  } catch (e) {
+    logger.error(`getBrand failed. Error: ${e}`);
+    return null;
+  }
+};

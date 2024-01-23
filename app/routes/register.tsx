@@ -17,12 +17,12 @@ import {
 import { config } from '~/config';
 import { logger } from '~/logger.server';
 
-import LogInAndRegister from '~/images/log-in-and-register.png';
-
 import { useIsOneClick } from '~/hooks/useIsOneClick';
 import { ActionData } from '~/features/register/types';
 import { RegularForm } from '~/features/register/components/RegularForm';
 import { OneClickForm } from '~/features/register/components/OneClickForm';
+import { LogInAndRegister } from '~/components/LoginAndRegister';
+import { useBrand } from '~/hooks/useBrand';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -154,6 +154,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Register() {
   const actionData: ActionData | undefined = useActionData();
   const isOneClick = useIsOneClick();
+  const brand = useBrand();
 
   console.log('actionData', actionData);
 
@@ -167,11 +168,7 @@ export default function Register() {
       {/* When is regular flow, render the default form */}
       {!isOneClick && <RegularForm />}
       {isOneClick && <OneClickForm />}
-      <img
-        alt='man at desk looking at a robot holding a clock'
-        src={LogInAndRegister}
-        style={{ maxWidth: 264 }}
-      />
+      <LogInAndRegister theme={brand.theme} sx={{ maxWidth: 264 }} />
     </Box>
   );
 }
