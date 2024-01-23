@@ -17,7 +17,6 @@ export default function Layout({ children }: PropsWithChildren) {
             alt={`${brand.name} logo`}
             src={brand.logo}
             style={{ maxWidth: 80 }}
-            crossOrigin='anonymous'
           />
         </Box>
         {children}

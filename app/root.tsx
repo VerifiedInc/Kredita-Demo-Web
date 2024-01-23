@@ -31,6 +31,7 @@ import { BrowserConfig } from './config.client';
 import { AppContextProvider } from './context/AppContext';
 import { getBrandDto } from './coreAPI.server';
 import { Brand, getBrand } from './utils/getBrand';
+import { createBrandSession, getBrandSession } from './session.server';
 
 // add browser env to window
 declare global {
@@ -70,12 +71,24 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({ context, request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
-  const brandUuid = searchParams.get('brand');
-  const brand: Brand = getBrand(
-    brandUuid
-      ? await getBrandDto(brandUuid, config.coreServiceAdminAuthKey)
-      : null
-  );
+  let brand = getBrand(null);
+
+  // Allow custom branding under environment flag.
+  if (config.customBrandingEnabled) {
+    // Get brand from session, or query params.
+    const brandSession = await getBrandSession(request);
+    brand = brandSession.data?.brand ? brandSession.data.brand : getBrand(null);
+    const brandUuid = searchParams.get('brand');
+
+    // Override possibly brand in session if query param is set.
+    if (brandUuid) {
+      brand = getBrand(
+        brandUuid
+          ? await getBrandDto(brandUuid, config.coreServiceAdminAuthKey)
+          : null
+      );
+    }
+  }
 
   const { cspNonce } = context;
   const {
@@ -87,20 +100,27 @@ export const loader: LoaderFunction = async ({ context, request }) => {
     oneClickEnabled,
   } = config;
 
-  return json({
-    cspNonce,
-    // pass config/env vars we want to be available in the browser
-    // ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
-    env: {
-      logRocketId,
-      logRocketProjectName,
-      ENV,
-      sentryDSN,
-      release: COMMIT_SHA,
-      oneClickEnabled,
+  return json(
+    {
+      cspNonce,
+      // pass config/env vars we want to be available in the browser
+      // ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
+      env: {
+        logRocketId,
+        logRocketProjectName,
+        ENV,
+        sentryDSN,
+        release: COMMIT_SHA,
+        oneClickEnabled,
+      },
+      brand,
     },
-    brand,
-  });
+    {
+      headers: {
+        'Set-Cookie': await createBrandSession(request, brand),
+      },
+    }
+  );
 };
 
 interface DocumentProps {

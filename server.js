@@ -29,6 +29,7 @@ app.disable('x-powered-by');
 app.use(
   helmet({
     useDefaults: true,
+    crossOriginEmbedderPolicy: { policy: 'credentialless' },
     contentSecurityPolicy: {
       directives: {
         'default-src': ["'self'"],

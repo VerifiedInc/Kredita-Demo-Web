@@ -9,8 +9,9 @@ import {
 import { Form, useLoaderData } from '@remix-run/react';
 
 import { logout, requireUserName } from '~/session.server';
-import VerifiedImage from '~/images/verified.png';
-import { Refresh } from '@mui/icons-material';
+
+import { VerifiedImage } from '~/components/VerifiedImage';
+import { useBrand } from '~/hooks/useBrand';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -41,6 +42,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Verified() {
+  const brand = useBrand();
   const { name } = useLoaderData<typeof loader>();
   const hasRedirect =
     typeof window !== 'undefined' &&
@@ -90,11 +92,7 @@ export default function Verified() {
         </Button>
       </Form>
       <Box mt={6}>
-        <img
-          alt='woman looking at phone with large verified badge in background'
-          src={VerifiedImage}
-          style={{ maxWidth: 267 }}
-        />
+        <VerifiedImage theme={brand.theme} sx={{ maxWidth: 267 }} />
       </Box>
     </Box>
   );
