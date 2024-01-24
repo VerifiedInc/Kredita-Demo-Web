@@ -1,5 +1,6 @@
 import { LoaderFunction, Response, redirect } from '@remix-run/node';
 import axios from 'axios';
+import { BrandDto } from '@verifiedinc/core-types';
 
 import { config } from '~/config';
 import { getBrandDto } from '~/coreAPI.server';
@@ -16,7 +17,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   const brandUuid = searchParams.get('brand');
   const brand: Brand | null = getBrand(
     brandUuid
-      ? await getBrandDto(brandUuid, config.coreServiceAdminAuthKey)
+      ? ((await getBrandDto(
+          brandUuid,
+          config.coreServiceAdminAuthKey
+        )) as BrandDto)
       : null
   );
 

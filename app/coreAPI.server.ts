@@ -1,3 +1,5 @@
+import { BrandDto } from '@verifiedinc/core-types';
+
 import { config } from '~/config';
 import { logger } from './logger.server';
 
@@ -299,31 +301,24 @@ export const oneClick = async (
   }
 };
 
-export type BrandDto = {
-  uuid: string;
-  receiverName: string;
-  logoImageUrl: string;
-  homepageUrl: string;
-  primaryColor: string;
-};
-
 /**
  * Get a brand DTO by uuid.
  * @param brandUuid Brand uuid.
  * @param accessToken Access token to access core service API.
  * @returns
  */
-const mapBrandDto = (brandDto: any): BrandDto => ({
+const mapBrandDto = (brandDto: BrandDto): Partial<BrandDto> => ({
   uuid: brandDto.uuid,
   receiverName: brandDto.receiverName,
   logoImageUrl: brandDto.logoImageUrl,
   homepageUrl: brandDto.homepageUrl,
   primaryColor: brandDto.primaryColor,
 });
+
 export const getBrandDto = async (
   brandUuid: string,
   accessToken: string
-): Promise<BrandDto | null> => {
+): Promise<Partial<BrandDto> | null> => {
   try {
     const headers = {
       Authorization: 'Bearer ' + accessToken,

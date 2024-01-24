@@ -51,6 +51,7 @@
     "@remix-run/node": "^1.18.0",
     "@remix-run/react": "^1.18.0",
     "@sentry/remix": "^7.64.0",
+    "@verifiedinc/core-types": "github:VerifiedInc/core-types#0.41.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
