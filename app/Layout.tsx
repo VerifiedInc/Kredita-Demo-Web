@@ -2,9 +2,10 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import type { PropsWithChildren } from 'react';
 
-import KreditaLogo from '~/images/kredita-logo.png';
+import { useBrand } from './hooks/useBrand';
 
 export default function Layout({ children }: PropsWithChildren) {
+  const brand = useBrand();
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Container
@@ -13,8 +14,8 @@ export default function Layout({ children }: PropsWithChildren) {
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4.5, mb: 5 }}>
           <img
-            alt='black Kredita logo'
-            src={KreditaLogo}
+            alt={`${brand.name} logo`}
+            src={brand.logo}
             style={{ maxWidth: 80 }}
           />
         </Box>

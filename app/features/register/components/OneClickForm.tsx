@@ -7,17 +7,21 @@ import {
   DialogContent,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
 import { red } from '@mui/material/colors';
 import parsePhoneNumber from 'libphonenumber-js';
 
-import { theme } from '~/styles/theme';
 import { phoneSchema } from '~/validations/phone.schema';
 
 import PhoneInput from '~/components/PhoneInput';
-import { ArrowBack } from '@mui/icons-material';
+import { useBrand } from '~/hooks/useBrand';
 
 export function OneClickForm() {
+  const theme = useTheme();
+  const brand = useBrand();
+
   const [value, setValue] = useState<string>('');
   const [touched, setTouched] = useState<boolean>(false);
   const [count, setCount] = useState<number>(0);
@@ -131,7 +135,7 @@ export function OneClickForm() {
         color='neutral.main'
         sx={{ textAlign: 'center' }}
       >
-        By using this Kredita demo, you agree to Verified Inc.‘s{' '}
+        By using this {brand.name} demo, you agree to Verified Inc.‘s{' '}
         <Link
           to='https://www.verified.inc/legal#terms-of-use'
           target='_blank'

@@ -1,13 +1,12 @@
 import type { ActionFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, useTheme } from '@mui/material';
 
 import { red } from '~/styles/colors';
 import { createUserSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
 import LogInAndRegister from '~/images/log-in-and-register.png';
-import { theme } from '~/styles/theme';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -40,6 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Login() {
   const actionData = useActionData<typeof action>();
+  const theme = useTheme();
 
   return (
     <Box

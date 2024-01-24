@@ -123,209 +123,210 @@ const typography = {
 
 // Create a theme instance.
 
-export const theme = createTheme({
-  palette: {
-    primary: {
-      main: colors.orange,
-      light: colors.lightOrange,
-      dark: colors.darkOrange,
-      contrastText: colors.white,
-    },
-    secondary: {
-      main: colors.blue,
-      light: colors.lightBlue,
-      dark: colors.darkBlue,
-      contrastText: colors.white,
-    },
-    error: {
-      main: colors.red,
-      light: colors.lightRed,
-      dark: colors.darkRed,
-      contrastText: colors.white,
-    },
-    warning: {
-      main: colors.yellow,
-      light: colors.yellow, // lightYellow is too light, makes alerts practically invisible
-      dark: colors.darkYellow,
-      contrastText: colors.white,
-    },
-    success: {
-      main: colors.green,
-      light: colors.green, // lightGreen is too light for alerts
-      dark: colors.darkGreen,
-      contrastText: colors.white,
-    },
-    info: {
-      main: colors.blue,
-      light: colors.lightBlue,
-      dark: colors.darkBlue,
-      contrastText: colors.white,
-    },
-    neutral: {
-      main: colors.grey,
-      light: colors.lightGrey,
-      dark: colors.darkGrey,
-    },
-  },
-  components: {
-    MuiAlertTitle: {
-      styleOverrides: {
-        root: {
-          ...typography.body2,
-          fontSize: '1.1rem',
-          fontWeight: 700,
-        },
+export const theme = (_theme: { main: string; light: string; dark: string }) =>
+  createTheme({
+    palette: {
+      primary: {
+        main: _theme.main,
+        light: _theme.light,
+        dark: _theme.dark,
+        contrastText: colors.white,
+      },
+      secondary: {
+        main: colors.blue,
+        light: colors.lightBlue,
+        dark: colors.darkBlue,
+        contrastText: colors.white,
+      },
+      error: {
+        main: colors.red,
+        light: colors.lightRed,
+        dark: colors.darkRed,
+        contrastText: colors.white,
+      },
+      warning: {
+        main: colors.yellow,
+        light: colors.yellow, // lightYellow is too light, makes alerts practically invisible
+        dark: colors.darkYellow,
+        contrastText: colors.white,
+      },
+      success: {
+        main: colors.green,
+        light: colors.green, // lightGreen is too light for alerts
+        dark: colors.darkGreen,
+        contrastText: colors.white,
+      },
+      info: {
+        main: colors.blue,
+        light: colors.lightBlue,
+        dark: colors.darkBlue,
+        contrastText: colors.white,
+      },
+      neutral: {
+        main: colors.grey,
+        light: colors.lightGrey,
+        dark: colors.darkGrey,
       },
     },
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          marginLeft: '0.5rem',
-          background: `${colors.white} !important`,
-          '&:before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: '',
-            zIndex: -1,
-            background: 'var(--background, inherit)',
+    components: {
+      MuiAlertTitle: {
+        styleOverrides: {
+          root: {
+            ...typography.body2,
+            fontSize: '1.1rem',
+            fontWeight: 700,
           },
         },
-        shrink: {
-          ...typography.label,
-          fontSize: '1rem',
-        },
       },
-    },
-    MuiInputBase: {
-      defaultProps: {
-        sx: {
-          borderRadius: 28,
-          pl: 0,
-        },
-      },
-    },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        notchedOutline: {
-          '& > legend': {
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            marginLeft: '0.5rem',
+            background: `${colors.white} !important`,
+            '&:before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: '',
+              zIndex: -1,
+              background: 'var(--background, inherit)',
+            },
+          },
+          shrink: {
             ...typography.label,
+            fontSize: '1rem',
           },
         },
       },
-    },
-    MuiTextField: {
-      defaultProps: {
-        fullWidth: true,
-      },
-    },
-    MuiListItemButton: {
-      styleOverrides: {
-        root: {
-          '&.Mui-selected': {
-            backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      MuiInputBase: {
+        defaultProps: {
+          sx: {
+            borderRadius: 28,
+            pl: 0,
           },
         },
       },
-    },
-    MuiModal: {
-      styleOverrides: {
-        root: {
-          zIndex: 1305,
-          '& .MuiPaper-root': {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          notchedOutline: {
+            '& > legend': {
+              ...typography.label,
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        defaultProps: {
+          fullWidth: true,
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: 'rgba(0, 0, 0, 0.08)',
+            },
+          },
+        },
+      },
+      MuiModal: {
+        styleOverrides: {
+          root: {
+            zIndex: 1305,
+            '& .MuiPaper-root': {
+              borderRadius: 30,
+            },
+          },
+        },
+      },
+      MuiDialogContent: {
+        styleOverrides: {
+          root: {
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 32,
+            paddingBottom: 32,
+          },
+        },
+      },
+      MuiStepIcon: {
+        styleOverrides: {
+          root: {
+            '&.Mui-active,&.Mui-completed': {
+              color: colors.blue,
+            },
+          },
+          text: {
+            fontWeight: 700,
+          },
+        },
+      },
+      MuiStepLabel: {
+        styleOverrides: {
+          label: {
+            ...typography.h4,
+          },
+          root: {},
+        },
+      },
+      MuiAlert: {
+        // TODO: figure out how to get alerts to use main colors instead of light
+      },
+      MuiDialogTitle: {
+        styleOverrides: {
+          root: {
+            ...typography.h4,
+          },
+        },
+      },
+      MuiDialogContentText: {
+        styleOverrides: {
+          root: {
+            ...typography.body2,
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          label: {
+            ...typography.subtitle2,
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          text: {
+            color: colors.white,
+          },
+          root: {
+            textTransform: 'none',
             borderRadius: 30,
           },
-        },
-      },
-    },
-    MuiDialogContent: {
-      styleOverrides: {
-        root: {
-          paddingLeft: 30,
-          paddingRight: 30,
-          paddingTop: 32,
-          paddingBottom: 32,
-        },
-      },
-    },
-    MuiStepIcon: {
-      styleOverrides: {
-        root: {
-          '&.Mui-active,&.Mui-completed': {
-            color: colors.blue,
-          },
-        },
-        text: {
-          fontWeight: 700,
-        },
-      },
-    },
-    MuiStepLabel: {
-      styleOverrides: {
-        label: {
-          ...typography.h4,
-        },
-        root: {},
-      },
-    },
-    MuiAlert: {
-      // TODO: figure out how to get alerts to use main colors instead of light
-    },
-    MuiDialogTitle: {
-      styleOverrides: {
-        root: {
-          ...typography.h4,
-        },
-      },
-    },
-    MuiDialogContentText: {
-      styleOverrides: {
-        root: {
-          ...typography.body2,
-        },
-      },
-    },
-    MuiChip: {
-      styleOverrides: {
-        label: {
-          ...typography.subtitle2,
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        text: {
-          color: colors.white,
-        },
-        root: {
-          textTransform: 'none',
-          borderRadius: 30,
-        },
-        outlined: {
-          borderWidth: 2,
-          '&:hover': {
+          outlined: {
             borderWidth: 2,
+            '&:hover': {
+              borderWidth: 2,
+            },
+          },
+        },
+        defaultProps: {
+          size: 'large',
+          variant: 'contained',
+          type: 'submit',
+          sx: {
+            mt: 4,
+            py: 2,
+            px: 3.5,
+            fontSize: '1.4rem',
           },
         },
       },
-      defaultProps: {
-        size: 'large',
-        variant: 'contained',
-        type: 'submit',
-        sx: {
-          mt: 4,
-          py: 2,
-          px: 3.5,
-          fontSize: '1.4rem',
-        },
-      },
     },
-  },
-  typography,
-  breakpoints: {
-    values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536, largeMobile: 415 },
-  },
-});
+    typography,
+    breakpoints: {
+      values: { xs: 0, sm: 600, md: 900, lg: 1200, xl: 1536, largeMobile: 415 },
+    },
+  });

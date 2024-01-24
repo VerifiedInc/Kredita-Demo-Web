@@ -9,8 +9,9 @@ import {
 import { Form, useLoaderData } from '@remix-run/react';
 
 import { logout, requireUserName } from '~/session.server';
-import VerifiedImage from '~/images/verified.png';
-import { Refresh } from '@mui/icons-material';
+
+import { VerifiedImage } from '~/components/VerifiedImage';
+import { useBrand } from '~/hooks/useBrand';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -41,10 +42,37 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Verified() {
+  const brand = useBrand();
   const { name } = useLoaderData<typeof loader>();
   const hasRedirect =
     typeof window !== 'undefined' &&
     sessionStorage.getItem('redirect') === 'true';
+
+  const renderGoHomeButton = () => {
+    const buttonProps = {
+      sx: {
+        mt: 3,
+        py: 2,
+        px: 3.5,
+        fontSize: '1.4rem',
+      },
+      children: 'Go to Home',
+    };
+
+    if (brand.homepageUrl) {
+      return (
+        <Button href={brand.homepageUrl} {...buttonProps}>
+          Go to Home
+        </Button>
+      );
+    }
+
+    return (
+      <Form method='post'>
+        <Button {...buttonProps}>Go to Home</Button>
+      </Form>
+    );
+  };
 
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>
@@ -60,18 +88,7 @@ export default function Verified() {
       >
         You're verified and signed up.
       </Typography>
-      <Form method='post'>
-        <Button
-          sx={{
-            mt: 3,
-            py: 2,
-            px: 3.5,
-            fontSize: '1.4rem',
-          }}
-        >
-          Go to Home
-        </Button>
-      </Form>
+      {renderGoHomeButton()}
       <Form method='post'>
         <input name='action' value='logout' readOnly hidden />
         <input name='redirect' value={String(hasRedirect)} readOnly hidden />
@@ -90,11 +107,7 @@ export default function Verified() {
         </Button>
       </Form>
       <Box mt={6}>
-        <img
-          alt='woman looking at phone with large verified badge in background'
-          src={VerifiedImage}
-          style={{ maxWidth: 267 }}
-        />
+        <VerifiedImage theme={brand.theme} sx={{ maxWidth: 267 }} />
       </Box>
     </Box>
   );

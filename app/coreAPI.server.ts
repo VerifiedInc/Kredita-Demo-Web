@@ -1,3 +1,5 @@
+import { BrandDto } from '@verifiedinc/core-types';
+
 import { config } from '~/config';
 import { logger } from './logger.server';
 
@@ -296,5 +298,51 @@ export const oneClick = async (
   } catch (e) {
     logger.error(`oneClick for ${phone} failed. Error: ${e}`);
     throw e;
+  }
+};
+
+/**
+ * Helper to map brand info
+ */
+const mapBrandDto = (brandDto: BrandDto): Partial<BrandDto> => ({
+  uuid: brandDto.uuid,
+  receiverName: brandDto.receiverName,
+  logoImageUrl: brandDto.logoImageUrl,
+  homepageUrl: brandDto.homepageUrl,
+  primaryColor: brandDto.primaryColor,
+});
+
+/**
+ * Get a brand DTO by uuid.
+ * @param brandUuid Brand uuid.
+ * @param accessToken Access token to access core service API.
+ * @returns
+ */
+export const getBrandDto = async (
+  brandUuid: string,
+  accessToken: string
+): Promise<Partial<BrandDto> | null> => {
+  try {
+    const headers = {
+      Authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(
+      config.coreServiceUrl + `/brands/${brandUuid}`,
+      {
+        method: 'GET',
+        headers,
+      }
+    );
+
+    if (!response.ok) return null;
+
+    const result = await response.json();
+
+    return mapBrandDto(result);
+  } catch (e) {
+    logger.error(`getBrand failed. Error: ${e}`);
+    return null;
   }
 };
