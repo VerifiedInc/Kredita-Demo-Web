@@ -308,11 +308,8 @@ export type BrandDto = {
 };
 
 /**
- * Get a brand DTO by uuid.
- * @param brandUuid Brand uuid.
- * @param accessToken Access token to access core service API.
- * @returns
- */
+* Helper to map brand info
+*/
 const mapBrandDto = (brandDto: any): BrandDto => ({
   uuid: brandDto.uuid,
   receiverName: brandDto.receiverName,
@@ -320,6 +317,13 @@ const mapBrandDto = (brandDto: any): BrandDto => ({
   homepageUrl: brandDto.homepageUrl,
   primaryColor: brandDto.primaryColor,
 });
+
+/**
+ * Get a brand DTO by uuid.
+ * @param brandUuid Brand uuid.
+ * @param accessToken Access token to access core service API.
+ * @returns
+ */
 export const getBrandDto = async (
   brandUuid: string,
   accessToken: string
