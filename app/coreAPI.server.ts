@@ -245,6 +245,7 @@ export const sharedCredentials = async (uuid: string) => {
  * @returns {Promise<{ url: string; phone: string }>} Returns an url that leads to 1-click signup request page
  */
 export const oneClick = async (
+  apiKey: string,
   phone?: string,
   oneClickOptions?: Partial<OneClickOptions>
 ): Promise<{ url: string; phone: string }> => {
@@ -254,7 +255,7 @@ export const oneClick = async (
   }
 
   const headers = {
-    Authorization: 'Bearer ' + config.unumAPIKey,
+    Authorization: 'Bearer ' + apiKey,
     'Content-Type': 'application/json',
   };
 
@@ -344,5 +345,43 @@ export const getBrandDto = async (
   } catch (e) {
     logger.error(`getBrand failed. Error: ${e}`);
     return null;
+  }
+};
+
+/**
+ * Get a brand API key.
+ * @param brandUuid Brand uuid.
+ * @param accessToken Access token to access core service API.
+ * @returns Brand API key.
+ */
+export const getBrandApiKey = async (
+  brandUuid: string,
+  accessToken: string
+): Promise<string> => {
+  try {
+    const headers = {
+      Authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(
+      config.coreServiceUrl +
+        `/db/apiKeys?brandUuid=${brandUuid}&$select[]=key`,
+      {
+        method: 'GET',
+        headers,
+      }
+    );
+
+    // if the brand does not have an api key, return the default api key
+    if (!response.ok) return config.unumAPIKey;
+
+    const result = await response.json();
+
+    return result.data[0].key;
+  } catch (e) {
+    logger.error(`getBrandApiKey failed. Error: ${e}`);
+    // if the function failed to respond, return the default api key
+    return config.unumAPIKey;
   }
 };

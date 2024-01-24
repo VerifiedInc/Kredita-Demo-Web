@@ -108,18 +108,19 @@ export const createUserSession = async (
  * Creates a brand session storage object
  * @see https://remix.run/docs/en/v1/utils/sessions#createcookiesessionstorage
  */
-export const brandSessionStorage = createCookieSessionStorage<{ brand: Brand }>(
-  {
-    cookie: {
-      name: '__brand_session',
-      secrets: [config.sessionSecret],
-      sameSite: 'lax',
-      path: '/',
-      httpOnly: true,
-      secure: config.NODE_ENV === 'production',
-    },
-  }
-);
+export const brandSessionStorage = createCookieSessionStorage<{
+  brand: Brand;
+  apiKey: string;
+}>({
+  cookie: {
+    name: '__brand_session',
+    secrets: [config.sessionSecret],
+    sameSite: 'lax',
+    path: '/',
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+  },
+});
 
 /**
  * Gets the brand session from the request
@@ -132,6 +133,7 @@ export const getBrandSession = async (request: Request) => {
 };
 
 const BRAND_SESSION_KEY = 'brand';
+const APIKEY_SESSION_KEY = 'apiKey';
 
 /**
  * Creates a brand session.
@@ -139,9 +141,14 @@ const BRAND_SESSION_KEY = 'brand';
  * @param {Brand} brand
  * @returns
  */
-export const createBrandSession = async (request: Request, brand: Brand) => {
+export const createBrandSession = async (
+  request: Request,
+  brand: Brand,
+  apiKey: string
+) => {
   const session = await getBrandSession(request);
   session.set(BRAND_SESSION_KEY, brand);
+  session.set(APIKEY_SESSION_KEY, apiKey);
   const commited = await brandSessionStorage.commitSession(session);
   return commited;
 };

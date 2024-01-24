@@ -7,7 +7,7 @@ import {
 import { useActionData } from '@remix-run/react';
 import Box from '@mui/material/Box';
 
-import { createUserSession } from '~/session.server';
+import { createUserSession, getBrandSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
 import {
   hasMatchingCredentials,
@@ -29,6 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const formData = await request.formData();
+  const brandSession = await getBrandSession(request);
 
   const action = formData.get('action');
   const email = formData.get('email');
@@ -55,6 +56,7 @@ export const action: ActionFunction = async ({ request }) => {
 
       try {
         const result = await oneClick(
+          brandSession.data.apiKey as string,
           phone,
           isRedirect ? { verificationOptions: 'only_code' } : undefined
         );
