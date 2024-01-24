@@ -302,10 +302,7 @@ export const oneClick = async (
 };
 
 /**
- * Get a brand DTO by uuid.
- * @param brandUuid Brand uuid.
- * @param accessToken Access token to access core service API.
- * @returns
+ * Helper to map brand info
  */
 const mapBrandDto = (brandDto: BrandDto): Partial<BrandDto> => ({
   uuid: brandDto.uuid,
@@ -315,6 +312,12 @@ const mapBrandDto = (brandDto: BrandDto): Partial<BrandDto> => ({
   primaryColor: brandDto.primaryColor,
 });
 
+/**
+ * Get a brand DTO by uuid.
+ * @param brandUuid Brand uuid.
+ * @param accessToken Access token to access core service API.
+ * @returns
+ */
 export const getBrandDto = async (
   brandUuid: string,
   accessToken: string
