@@ -15,9 +15,9 @@ interface Config {
   newRelicLicenseKey: string;
   newRelicLoggingLicenseKey: string;
   sessionSecret: string;
-  unumAPIKey: string;
+  verifiedApiKey: string;
   coreServiceUrl: string;
-  unumWalletUrl: string;
+  verifiedWalletUrl: string;
   demoUrl: string;
   sentryDSN: string;
   oneClickEnabled: boolean;
@@ -37,9 +37,9 @@ export const config: Config = {
   newRelicLicenseKey: process.env.NEW_RELIC_LICENSE_KEY || '',
   newRelicLoggingLicenseKey: process.env.NEW_RELIC_LOGGING_LICENSE_KEY || '',
   sessionSecret: process.env.SESSION_SECRET || '',
-  unumAPIKey: process.env.UNUM_API_KEY || '',
+  verifiedApiKey: process.env.VERIFIED_API_KEY || '',
   coreServiceUrl: process.env.CORE_SERVICE_URL || '',
-  unumWalletUrl: process.env.UNUM_WALLET_URL || '',
+  verifiedWalletUrl: process.env.VERIFIED_WALLET_URL || '',
   demoUrl: process.env.DEMO_URL || '',
   sentryDSN: process.env.SENTRY_DSN || '',
   oneClickEnabled: Boolean(process.env.ONE_CLICK_ENABLED === 'true'),
