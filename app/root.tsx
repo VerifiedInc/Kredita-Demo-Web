@@ -20,6 +20,7 @@ import {
   ThemeProvider,
   unstable_useEnhancedEffect as useEnhancedEffect,
 } from '@mui/material';
+import { BrandDto } from '@verifiedinc/core-types';
 
 import { config } from './config';
 import { initLogRocket } from './logrocket';
@@ -29,7 +30,7 @@ import { getErrorMessage } from './errors';
 import Layout from './Layout';
 import { BrowserConfig } from './config.client';
 import { AppContextProvider } from './context/AppContext';
-import { getBrandDto } from './coreAPI.server';
+import { getBrandApiKey, getBrandDto } from './coreAPI.server';
 import { Brand, getBrand } from './utils/getBrand';
 import { createBrandSession, getBrandSession } from './session.server';
 
@@ -72,19 +73,26 @@ export const loader: LoaderFunction = async ({ context, request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
   let brand = getBrand(null);
+  let apiKey = config.verifiedApiKey;
 
   // Allow custom branding under environment flag.
   if (config.customBrandingEnabled) {
     // Get brand from session, or query params.
     const brandSession = await getBrandSession(request);
     brand = brandSession.data?.brand ? brandSession.data.brand : getBrand(null);
+    apiKey = brandSession.data.apiKey ? brandSession.data.apiKey : apiKey;
     const brandUuid = searchParams.get('brand');
 
     // Override possibly brand in session if query param is set.
     if (brandUuid) {
+      apiKey = await getBrandApiKey(brandUuid, config.coreServiceAdminAuthKey);
+
       brand = getBrand(
         brandUuid
-          ? await getBrandDto(brandUuid, config.coreServiceAdminAuthKey)
+          ? ((await getBrandDto(
+              brandUuid,
+              config.coreServiceAdminAuthKey
+            )) as BrandDto)
           : null
       );
     }
@@ -117,7 +125,7 @@ export const loader: LoaderFunction = async ({ context, request }) => {
     },
     {
       headers: {
-        'Set-Cookie': await createBrandSession(request, brand),
+        'Set-Cookie': await createBrandSession(request, brand, apiKey),
       },
     }
   );
