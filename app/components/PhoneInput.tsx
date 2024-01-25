@@ -64,7 +64,6 @@ export default function PhoneInput({
     value: valueProp ?? value,
     error,
     onChange: handleChange,
-    inputMode: 'numeric',
     autoComplete: 'tel',
     disabled,
     inputProps: {
@@ -74,6 +73,7 @@ export default function PhoneInput({
       // Make placeholder always visible
       lazy: true,
       mask: '{+1} (000) 000-0000',
+      inputMode: 'numeric',
     },
     InputProps: {
       inputComponent: InputMask as any,
