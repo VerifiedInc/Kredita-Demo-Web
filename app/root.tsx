@@ -73,7 +73,7 @@ export const loader: LoaderFunction = async ({ context, request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
   let brand = getBrand(null);
-  let apiKey = config.unumAPIKey;
+  let apiKey = config.verifiedApiKey;
 
   // Allow custom branding under environment flag.
   if (config.customBrandingEnabled) {

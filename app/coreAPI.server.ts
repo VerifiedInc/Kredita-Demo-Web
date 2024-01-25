@@ -61,7 +61,7 @@ interface SharedCredentials {
  * Function to make POST request to Verified Inc.'s Core Service API /hasMatchingCredentials endpoint. The intent is to check if
  * a user already has the necessary email and phone credential to enable 1-click sign up.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
- * of the API key (unumAPIKey).
+ * of the API key (verifiedApiKey).
  *
  * Documentation: https://docs.unumid.co/api-overview#check-user-credentials
  * @param email
@@ -75,7 +75,7 @@ export const hasMatchingCredentials = async (
   if (!email && !phone) return null; // short circuit if neither email nor phone are provided
 
   const headers = {
-    Authorization: 'Bearer ' + config.unumAPIKey,
+    Authorization: 'Bearer ' + config.verifiedApiKey,
     'Content-Type': 'application/json',
   };
 
@@ -189,7 +189,7 @@ export const hasMatchingCredentials = async (
  * Function to make GET request to Verified Inc.'s Core Service API /sharedCredentials/{uuid} endpoint. The intent is to retrieve
  * the credentials shared by the user after they've completed a credentials request.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
- * of the API key (unumAPIKey).
+ * of the API key (verifiedApiKey).
  *
  * Documentation: https://docs.unumid.co/api-overview#get-shared-credentials
  * @param uuid
@@ -197,7 +197,7 @@ export const hasMatchingCredentials = async (
  */
 export const sharedCredentials = async (uuid: string) => {
   const headers = {
-    Authorization: 'Bearer ' + config.unumAPIKey,
+    Authorization: 'Bearer ' + config.verifiedApiKey,
     'Content-Type': 'application/json',
   };
 
@@ -237,7 +237,7 @@ export const sharedCredentials = async (uuid: string) => {
  * Function to make POST request to Verified Inc.'s Core Service API /1-click endpoint. The call
  * sends an SMS containing a link to allow user to do 1-click sign up.
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
- * of the API key (unumAPIKey).
+ * of the API key (verifiedApiKey).
  * 
  * Documentation: https://docs.unumid.co/api-overview#one-click
 
@@ -374,7 +374,7 @@ export const getBrandApiKey = async (
     );
 
     // if the brand does not have an api key, return the default api key
-    if (!response.ok) return config.unumAPIKey;
+    if (!response.ok) return config.verifiedApiKey;
 
     const result = await response.json();
 
@@ -382,6 +382,6 @@ export const getBrandApiKey = async (
   } catch (e) {
     logger.error(`getBrandApiKey failed. Error: ${e}`);
     // if the function failed to respond, return the default api key
-    return config.unumAPIKey;
+    return config.verifiedApiKey;
   }
 };
