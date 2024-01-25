@@ -91,12 +91,10 @@ export function OneClickForm() {
   return (
     <>
       <Typography variant='h1' mt={0} align='center'>
-        You're moments
-        <br />
-        away from magic...
+        {brand.name}
       </Typography>
-      <Typography variant='h3' mt={2.5} fontWeight={400}>
-        Let’s get you verified!
+      <Typography variant='h3' mt={2.5} mb={1} fontWeight={400}>
+        You’re moments away from magic…
       </Typography>
       <fetcher.Form
         ref={formRef}
@@ -135,7 +133,7 @@ export function OneClickForm() {
         color='neutral.main'
         sx={{ textAlign: 'center' }}
       >
-        By using this {brand.name} demo, you agree to Verified Inc.‘s{' '}
+        By using {brand.name} demo, you agree to Verified Inc.‘s{' '}
         <Link
           to='https://www.verified.inc/legal#terms-of-use'
           target='_blank'

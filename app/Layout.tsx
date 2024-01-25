@@ -12,12 +12,14 @@ export default function Layout({ children }: PropsWithChildren) {
         maxWidth='xs'
         sx={{ paddingX: 3, display: 'flex', flexDirection: 'column' }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4.5, mb: 5 }}>
-          <img
-            alt={`${brand.name} logo`}
-            src={brand.logo}
-            style={{ maxWidth: 80 }}
-          />
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4.5, mb: 2 }}>
+          {brand.logo && (
+            <img
+              alt={`${brand.name} logo`}
+              src={brand.logo}
+              style={{ maxWidth: 80 }}
+            />
+          )}
         </Box>
         {children}
       </Container>
