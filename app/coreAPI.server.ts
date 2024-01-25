@@ -63,7 +63,7 @@ interface SharedCredentials {
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
  * of the API key (verifiedApiKey).
  *
- * Documentation: https://docs.unumid.co/api-overview#check-user-credentials
+ * Documentation: https://docs.verified.inc/api-overview#check-user-credentials
  * @param email
  * @param phone
  * @returns {Promise<string | null>} if a match for the request is found, returns the Verified Inc. Web Wallet url for redirect, if no match is found returns null
@@ -191,7 +191,7 @@ export const hasMatchingCredentials = async (
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
  * of the API key (verifiedApiKey).
  *
- * Documentation: https://docs.unumid.co/api-overview#get-shared-credentials
+ * Documentation: https://docs.verified.inc/api-overview#get-shared-credentials
  * @param uuid
  * @returns {Promise<SharedCredentials | null>} if a match for the request is found, returns the shared credentials, if no match is found returns null
  */
@@ -239,7 +239,7 @@ export const sharedCredentials = async (uuid: string) => {
  * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
  * of the API key (verifiedApiKey).
  * 
- * Documentation: https://docs.unumid.co/api-overview#one-click
+ * Documentation: https://docs.verified.inc/api-overview#one-click
 
  * @param phone
  * @returns {Promise<{ url: string; phone: string }>} Returns an url that leads to 1-click signup request page
