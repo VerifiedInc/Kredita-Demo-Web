@@ -40,9 +40,9 @@ npm install
 Make a clone of the `.env.example` file and save as `.env` in the demo's root directory. There are a few items worth noting for setting up the `.env`.
 
 - `PORT` can be updated to whichever port you'd prefer the demo to run on locally. If the value of `PORT` is changed, you will also need to change the port specified in the `DEMO_URL`.
-- `UNUM_API_KEY` needs to be populated with the API key you've been provided.
+- `VERIFIED_API_KEY` needs to be populated with the API key you've been provided.
 - `CORE_SERVICE_URL` and `UNUM_WALLET_URL` are defaulted to the Unum ID Core Service API and Web Wallet in our sandbox environment.
-- `CORE_SERVICE_ADMIN_AUTH_KEY` is an internal environment key which is used internally to allow custom branding. This key is essential for secure communication between the Kredita demo and the Unum ID Core Service.
+- `CORE_SERVICE_ADMIN_AUTH_KEY` is an Verified Inc Only, internal environment key which is used to allow custom branding and brand API Key fetching. This can be ignored for reference purposes.
 
 ### Running
 
