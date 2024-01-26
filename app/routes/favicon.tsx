@@ -1,11 +1,17 @@
-import { LoaderFunction, Response, redirect } from '@remix-run/node';
+import { LoaderFunction, Response } from '@remix-run/node';
 import axios from 'axios';
 import { BrandDto } from '@verifiedinc/core-types';
+import sharp from 'sharp';
 
 import { config } from '~/config';
 import { getBrandDto } from '~/coreAPI.server';
 import { logger } from '~/logger.server';
 import { Brand, getBrand } from '~/utils/getBrand';
+
+// Convert buffer to webp.
+const toWebp = async (buffer: ArrayBuffer): Promise<Buffer> => {
+  return sharp(buffer).resize(80, 80).webp({ quality: 80 }).toBuffer();
+};
 
 /**
  * Loader function to fetch the favicon for the brand.
@@ -25,22 +31,36 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 
   try {
+    if (!brand.logo.length) {
+      throw new Error(`No logo for ${brand.name}`);
+    }
+
     const brandUrl = brand.logo.startsWith('https')
       ? brand.logo
       : `${url.origin}${brand.logo}`;
     const response = await axios.get(brandUrl, {
       responseType: 'arraybuffer',
     });
-    return new Response(response.data, {
+
+    return new Response(await toWebp(response.data as ArrayBuffer), {
       headers: {
-        'Content-Type': response.headers['content-type'] || 'image/png',
+        'Content-Type': 'image/webp',
       },
     });
   } catch {
-    logger.error(`failed to fetch favicon for brand ${brand.name}`);
-  }
+    logger.error(
+      `failed to fetch favicon for brand ${brand.name}, using verified inc one.`
+    );
 
-  // Should never get here since we use the default favicon in brand when is null,
-  // but it can happen of the url not being valid.
-  return redirect('/favicon.ico');
+    // Use Verified Inc.'s logo as favicon in case it failed to fetch the brand's logo.
+    const response = await axios.get(`${url.origin}/verifiedinc.webp`, {
+      responseType: 'arraybuffer',
+    });
+
+    return new Response(await toWebp(response.data as ArrayBuffer), {
+      headers: {
+        'Content-Type': 'image/webp',
+      },
+    });
+  }
 };

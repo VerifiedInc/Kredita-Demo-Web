@@ -77,10 +77,6 @@ export const loader: LoaderFunction = async ({ context, request }) => {
 
   // Allow custom branding under environment flag.
   if (config.customBrandingEnabled) {
-    // Get brand from session, or query params.
-    const brandSession = await getBrandSession(request);
-    brand = brandSession.data?.brand ? brandSession.data.brand : getBrand(null);
-    apiKey = brandSession.data.apiKey ? brandSession.data.apiKey : apiKey;
     const brandUuid = searchParams.get('brand');
 
     // Override possibly brand in session if query param is set.
@@ -143,6 +139,7 @@ interface DocumentProps {
 const Document = withEmotionCache(
   ({ children, cspNonce, env, brand }: DocumentProps, emotionCache) => {
     const clientStyleData = useContext(ClientStyleContext);
+    const favicon = `/favicon?brand=${brand.uuid}`;
 
     // only executed on client
     useEnhancedEffect(() => {
@@ -165,11 +162,8 @@ const Document = withEmotionCache(
         <head>
           <meta name='theme-color' content={brand.theme.main} />
           <title>{brand.name + ' Demo'}</title>
-          <link
-            rel='icon'
-            href={`/favicon?brand=${brand.uuid}`}
-            type='image/x=icon'
-          />
+          <link rel='icon' href={favicon} type='image/x-icon' />
+          <link rel='apple-touch-icon' href={favicon} type='image/x-icon' />
           <Meta />
           <Links />
         </head>
