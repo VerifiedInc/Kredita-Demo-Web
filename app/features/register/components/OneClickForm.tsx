@@ -110,6 +110,7 @@ export function OneClickForm() {
           mt={1}
         >
           <input name='action' value='one-click' hidden readOnly />
+          <input name='apiKey' value={brand.apiKey} hidden readOnly />
           <PhoneInput
             name='phone'
             autoFocus

@@ -104,27 +104,21 @@ export const loader: LoaderFunction = async ({ context, request }) => {
     oneClickEnabled,
   } = config;
 
-  return json(
-    {
-      cspNonce,
-      // pass config/env vars we want to be available in the browser
-      // ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
-      env: {
-        logRocketId,
-        logRocketProjectName,
-        ENV,
-        sentryDSN,
-        release: COMMIT_SHA,
-        oneClickEnabled,
-      },
-      brand,
+  return json({
+    cspNonce,
+    // pass config/env vars we want to be available in the browser
+    // ref: https://remix.run/docs/en/v1/guides/envvars#browser-environment-variables
+    env: {
+      logRocketId,
+      logRocketProjectName,
+      ENV,
+      sentryDSN,
+      release: COMMIT_SHA,
+      oneClickEnabled,
     },
-    {
-      headers: {
-        'Set-Cookie': await createBrandSession(request, brand, apiKey),
-      },
-    }
-  );
+    brand,
+    apiKey,
+  });
 };
 
 interface DocumentProps {
