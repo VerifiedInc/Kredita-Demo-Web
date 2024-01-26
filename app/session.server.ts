@@ -149,6 +149,9 @@ export const createBrandSession = async (
   const session = await getBrandSession(request);
   session.set(BRAND_SESSION_KEY, brand);
   session.set(APIKEY_SESSION_KEY, apiKey);
-  const commited = await brandSessionStorage.commitSession(session);
+  const commited = await brandSessionStorage.commitSession(session, {
+    secure: true,
+    sameSite: 'none',
+  });
   return commited;
 };
