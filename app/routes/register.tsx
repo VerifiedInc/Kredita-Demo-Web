@@ -55,6 +55,8 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       try {
+        logger.info(`calling oneClick with ${brandSession.data.apiKey}`);
+
         const result = await oneClick(
           brandSession.data.apiKey as string,
           phone,
