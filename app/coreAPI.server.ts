@@ -273,6 +273,8 @@ export const oneClick = async (
   const body = JSON.stringify(options);
 
   try {
+    logger.info(`calling oneClick with headers ${JSON.stringify(headers)}`);
+
     const response = await fetch(config.coreServiceUrl + '/1-click', {
       method: 'POST',
       headers,
