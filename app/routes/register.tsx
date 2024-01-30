@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import { createUserSession } from '~/session.server';
 import { getErrorMessage, getErrorStatus } from '~/errors';
 import {
+  getSharedCredentialsOneClick,
   hasMatchingCredentials,
   oneClick,
   sharedCredentials,
@@ -127,6 +128,18 @@ export const loader: LoaderFunction = async ({ request }) => {
   const { searchParams } = url;
 
   const sharedCredentialsUuid = searchParams.get('sharedCredentialsUuid');
+  const oneClickUuid = searchParams.get('1ClickUuid');
+
+  if (oneClickUuid) {
+    const result = await getSharedCredentialsOneClick(oneClickUuid);
+    if (result) {
+      return createUserSession(
+        request,
+        String(result.credentials.fullName.firstName),
+        `/verified?${searchParams.toString()}`
+      );
+    }
+  }
 
   // If a sharedCredentialsUuid parameter exists, retrieve the associated credentials and
   // create the user's session - re-directing them to /verified
