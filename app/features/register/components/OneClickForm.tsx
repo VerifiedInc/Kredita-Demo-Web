@@ -45,6 +45,8 @@ export function OneClickForm() {
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
+  const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
+
   const handlePhoneChange = (value: string) => {
     setValue(value);
     setTouched(true);
@@ -111,6 +113,7 @@ export function OneClickForm() {
         >
           <input name='action' value='one-click' hidden readOnly />
           <input name='apiKey' value={brand.apiKey} hidden readOnly />
+          <input name='redirectUrl' value={redirectUrl} hidden readOnly />
           <PhoneInput
             name='phone'
             autoFocus

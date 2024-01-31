@@ -20,7 +20,6 @@ import {
   ThemeProvider,
   unstable_useEnhancedEffect as useEnhancedEffect,
 } from '@mui/material';
-import { BrandDto } from '@verifiedinc/core-types';
 
 import { config } from './config';
 import { initLogRocket } from './logrocket';
@@ -30,9 +29,8 @@ import { getErrorMessage } from './errors';
 import Layout from './Layout';
 import { BrowserConfig } from './config.client';
 import { AppContextProvider } from './context/AppContext';
-import { getBrandApiKey, getBrandDto } from './coreAPI.server';
-import { Brand, getBrand } from './utils/getBrand';
-import { createBrandSession, getBrandSession } from './session.server';
+import { Brand } from './utils/getBrand';
+import { getBrandSet } from './utils/getBrandSet';
 
 // add browser env to window
 declare global {
@@ -72,27 +70,7 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({ context, request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
-  let brand = getBrand(null);
-  let apiKey = config.verifiedApiKey;
-
-  // Allow custom branding under environment flag.
-  if (config.customBrandingEnabled) {
-    const brandUuid = searchParams.get('brand');
-
-    // Override possibly brand in session if query param is set.
-    if (brandUuid) {
-      apiKey = await getBrandApiKey(brandUuid, config.coreServiceAdminAuthKey);
-
-      brand = getBrand(
-        brandUuid
-          ? ((await getBrandDto(
-              brandUuid,
-              config.coreServiceAdminAuthKey
-            )) as BrandDto)
-          : null
-      );
-    }
-  }
+  const brandSet = await getBrandSet(searchParams);
 
   const { cspNonce } = context;
   const {
@@ -116,8 +94,7 @@ export const loader: LoaderFunction = async ({ context, request }) => {
       release: COMMIT_SHA,
       oneClickEnabled,
     },
-    brand,
-    apiKey,
+    ...brandSet,
   });
 };
 

@@ -12,22 +12,22 @@ import { logout, requireUserName } from '~/session.server';
 
 import { VerifiedImage } from '~/components/VerifiedImage';
 import { useBrand } from '~/hooks/useBrand';
+import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
+  const url = new URL(request.url);
+  const searchParams = new URLSearchParams(url.searchParams);
   const formData = await request.formData();
   const action = formData.get('action');
-  const hasRedirectParam = formData.get('redirect') === 'true';
 
   switch (action) {
     case 'logout': {
-      return logout(
-        request,
-        hasRedirectParam ? '/register?redirect=true' : undefined
-      );
+      return logoutUseCase({ request });
     }
     default: {
-      return redirect('/');
+      const searchParamsString = searchParams.toString();
+      return redirect(`/${searchParamsString ? `?${searchParamsString}` : ''}`);
     }
   }
 };

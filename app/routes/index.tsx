@@ -9,16 +9,13 @@ import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
 import IconBoxAndLabel from '~/components/IconBoxAndLabel';
 import SpendSummary from '~/components/SpendSummary';
-import { logout, requireUserName } from '~/session.server';
+import { requireUserName } from '~/session.server';
+
+import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const hasRedirectParam = formData.get('redirect') === 'true';
-  return logout(
-    request,
-    hasRedirectParam ? '/register?redirect=true' : undefined
-  );
+  return logoutUseCase({ request });
 };
 
 // The exported `loader` function will be called when the route makes a GET request, i.e. when it is rendered
