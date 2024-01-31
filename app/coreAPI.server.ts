@@ -1,4 +1,4 @@
-import { BrandDto } from '@verifiedinc/core-types';
+import { BrandDto, OneClickDto } from '@verifiedinc/core-types';
 
 import { config } from '~/config';
 import { logger } from './logger.server';
@@ -229,6 +229,51 @@ export const sharedCredentials = async (uuid: string) => {
     return result as SharedCredentials;
   } catch (e) {
     logger.error(`GET sharedCredentials for uuid: ${uuid} failed. Error: ${e}`);
+    throw e;
+  }
+};
+
+/**
+ * Function to make GET request to Verified Inc.'s Core Service API /1-click/{uuid} endpoint. The intent is to retrieve
+ * the credentials shared by the user after they've completed a credentials request.
+ * Please note: This functionality is NOT and should NOT be called in the browser due to the sensitive nature
+ * of the API key (verifiedApiKey).
+ *
+ * Documentation: https://docs.verified.inc/#receive-user-data
+ * @param uuid
+ * @returns {Promise<OneClickDto | null>} if a match for the request is found, returns the shared credentials, if no match is found returns null
+ */
+export const getSharedCredentialsOneClick = async (uuid: string) => {
+  const headers = {
+    Authorization: 'Bearer ' + config.verifiedApiKey,
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    const response = await fetch(config.coreServiceUrl + '/1-click/' + uuid, {
+      method: 'GET',
+      headers,
+    });
+
+    const result = await response.json();
+
+    if (result?.code) {
+      logger.debug(
+        `No 1-click shared credentials found for uuid: ${uuid}. Error: ${result.message}`
+      );
+      return null;
+    }
+
+    logger.info(
+      `Successfully retrieved 1-click shared credentials for uuid: ${uuid}.`
+    );
+
+    // In a production environment the 1-click shared credentials should be appropriately stored in
+    // a manner that can be accessed as needed. A brand's access to 1-click shared credentials via
+    // this endpoint is deleted after 5 minutes of the initial data retrieval.
+    return result as OneClickDto;
+  } catch (e) {
+    logger.error(`GET 1-click for uuid: ${uuid} failed. Error: ${e}`);
     throw e;
   }
 };
