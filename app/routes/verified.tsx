@@ -8,7 +8,7 @@ import {
 } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 
-import { logout, requireUserName } from '~/session.server';
+import { requireUserName } from '~/session.server';
 
 import { VerifiedImage } from '~/components/VerifiedImage';
 import { useBrand } from '~/hooks/useBrand';
@@ -18,7 +18,7 @@ import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
-  const formData = await request.formData();
+  const formData = await request.clone().formData();
   const action = formData.get('action');
 
   switch (action) {
