@@ -24,6 +24,7 @@ import { RegularForm } from '~/features/register/components/RegularForm';
 import { OneClickForm } from '~/features/register/components/OneClickForm';
 import { LogInAndRegister } from '~/components/LoginAndRegister';
 import { useBrand } from '~/hooks/useBrand';
+import { getBrandSet } from '~/utils/getBrandSet';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -35,6 +36,7 @@ export const action: ActionFunction = async ({ request }) => {
   const email = formData.get('email');
   const phone = formData.get('phone');
   const apiKey = formData.get('apiKey');
+  const redirectUrl = (formData.get('redirectUrl') as string) || undefined;
 
   const isRedirect = searchParams.get('redirect') === 'true';
 
@@ -61,7 +63,9 @@ export const action: ActionFunction = async ({ request }) => {
         const result = await oneClick(
           apiKey as string,
           phone,
-          isRedirect ? { verificationOptions: 'only_code' } : undefined
+          isRedirect
+            ? { redirectUrl, verificationOptions: 'only_code' }
+            : { redirectUrl }
         );
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
@@ -126,12 +130,16 @@ export const action: ActionFunction = async ({ request }) => {
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const { searchParams } = url;
+  const brandSet = await getBrandSet(searchParams);
 
   const sharedCredentialsUuid = searchParams.get('sharedCredentialsUuid');
   const oneClickUuid = searchParams.get('1ClickUuid');
 
   if (oneClickUuid) {
-    const result = await getSharedCredentialsOneClick(oneClickUuid);
+    const result = await getSharedCredentialsOneClick(
+      brandSet.apiKey,
+      oneClickUuid
+    );
     if (result) {
       return createUserSession(
         request,

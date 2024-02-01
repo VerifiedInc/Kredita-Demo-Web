@@ -33,6 +33,7 @@ export interface OneClickOptions {
   };
   credentialRequests?: CredentialRequest[]; // Encodes which credentials are being asked for 1-click
   verificationOptions?: 'only_link' | 'only_code' | 'both_link_and_code';
+  redirectUrl?: string;
 }
 
 /**
@@ -243,9 +244,12 @@ export const sharedCredentials = async (uuid: string) => {
  * @param uuid
  * @returns {Promise<OneClickDto | null>} if a match for the request is found, returns the shared credentials, if no match is found returns null
  */
-export const getSharedCredentialsOneClick = async (uuid: string) => {
+export const getSharedCredentialsOneClick = async (
+  apiKey: string,
+  uuid: string
+) => {
   const headers = {
-    Authorization: 'Bearer ' + config.verifiedApiKey,
+    Authorization: 'Bearer ' + apiKey,
     'Content-Type': 'application/json',
   };
 
