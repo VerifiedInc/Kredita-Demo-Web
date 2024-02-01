@@ -76,10 +76,10 @@ export default function Verified() {
 
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>
-      <Typography variant='h1' align='center' mt={-2}>
+      <Typography variant='h1' align='center' mt={0}>
         Welcome to
         <br />
-        Kredita, {name}!
+        {brand.name}, {name}!
       </Typography>
       <Typography
         variant='h3'
