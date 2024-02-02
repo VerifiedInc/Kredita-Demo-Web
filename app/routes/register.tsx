@@ -19,12 +19,14 @@ import { config } from '~/config';
 import { logger } from '~/logger.server';
 
 import { useIsOneClick } from '~/hooks/useIsOneClick';
+import { useIsOneClickNonHosted } from '~/hooks/useIsOneClickNonHosted';
 import { ActionData } from '~/features/register/types';
 import { RegularForm } from '~/features/register/components/RegularForm';
 import { OneClickForm } from '~/features/register/components/OneClickForm';
 import { LogInAndRegister } from '~/components/LoginAndRegister';
 import { useBrand } from '~/hooks/useBrand';
 import { getBrandSet } from '~/utils/getBrandSet';
+import { OneClickFormNonHosted } from '~/features/register/components/OneClickFormNonHosted';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -179,6 +181,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Register() {
   const actionData: ActionData | undefined = useActionData();
   const isOneClick = useIsOneClick();
+  const isOneClickNonHosted = useIsOneClickNonHosted();
   const brand = useBrand();
 
   console.log('actionData', actionData);
@@ -192,7 +195,8 @@ export default function Register() {
     >
       {/* When is regular flow, render the default form */}
       {!isOneClick && <RegularForm />}
-      {isOneClick && <OneClickForm />}
+      {isOneClick && !isOneClickNonHosted && <OneClickForm />}
+      {isOneClickNonHosted && <OneClickFormNonHosted />}
       <LogInAndRegister theme={brand.theme} sx={{ maxWidth: 264 }} />
     </Box>
   );

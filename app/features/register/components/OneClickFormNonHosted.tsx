@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
@@ -13,32 +14,30 @@ import { red } from '@mui/material/colors';
 import parsePhoneNumber from 'libphonenumber-js';
 
 import { phoneSchema } from '~/validations/phone.schema';
-
+import { birthdaySchema } from '~/validations/birthday.schema';
 import { useBrand } from '~/hooks/useBrand';
+import { useField } from '~/hooks/useField';
 import PhoneInput from '~/components/PhoneInput';
-import { OneClickHeader } from '~/features/register/components/OneClickHeader';
-import { OneClickLegalText } from './OneClickLegalText';
 
-export function OneClickForm() {
+import { OneClickHeader } from '~/features/register/components/OneClickHeader';
+import { OneClickLegalText } from '~/features/register/components/OneClickLegalText';
+import { InputMask } from '~/components/InputMask';
+
+export function OneClickFormNonHosted() {
   const brand = useBrand();
 
-  const [value, setValue] = useState<string>('');
-  const [touched, setTouched] = useState<boolean>(false);
+  const phone = useField(phoneSchema);
+  const birthday = useField(birthdaySchema);
   const [count, setCount] = useState<number>(0);
 
   const [searchParams] = useSearchParams();
   const isRedirect = searchParams.get('redirect') === 'true';
 
-  const validation = phoneSchema.safeParse(value);
-  const errorMessage = !validation.success
-    ? validation?.error?.format()?._errors?.[0]
-    : null;
-
   const fetcher = useFetcher();
   const isFetching = fetcher.state !== 'idle';
   const fetcherSubmit = fetcher.submit;
   const fetcherData = fetcher.data;
-  const phone = fetcherData?.phone ?? null;
+  const phoneFetcherData = fetcherData?.phone ?? null;
   const phoneRef = useRef<string | null>(fetcherData?.phone ?? null);
   const error = fetcherData?.error;
   const isSuccess = fetcherData?.success ?? false;
@@ -48,11 +47,9 @@ export function OneClickForm() {
   const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const handlePhoneChange = (value: string) => {
-    setValue(value);
-    setTouched(true);
+    phone.change(value);
 
-    const validation = phoneSchema.safeParse(value);
-    const isValid = validation.success;
+    const isValid = phone.isValid(value);
 
     // Short-circuit if is not valid or is already fetching
     if (!isValid || isFetching) return;
@@ -71,15 +68,15 @@ export function OneClickForm() {
   useEffect(() => {
     if (isFetching) return;
     // Reset phone to initial state when is not fetching
-    setValue('');
-    setTouched(false);
+    phone.reset();
     setCount((prev) => prev + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching]);
 
   if (isSuccess) {
     console.log('response is successfull', fetcherData);
     // Assign fone to ref so we can use it in the dialog without flikering when fetcherData is null.
-    phoneRef.current = phone;
+    phoneRef.current = phoneFetcherData;
   }
 
   useEffect(() => {
@@ -115,11 +112,30 @@ export function OneClickForm() {
           <PhoneInput
             name='phone'
             autoFocus
-            value={value}
+            value={phone.value}
             onChange={handlePhoneChange}
-            error={touched && !!errorMessage}
-            helperText={(touched && errorMessage) || undefined}
+            error={phone.touched && !!phone.error}
+            helperText={(phone.touched && phone.error) || undefined}
             disabled={isFetching}
+          />
+          <TextField
+            name='birthday'
+            value={birthday.value}
+            onChange={(e) => birthday.change(e.target.value)}
+            error={birthday.touched && !!birthday.error}
+            helperText={(birthday.touched && birthday.error) || 'mm/dd/yyyy'}
+            disabled={isFetching}
+            sx={{ mt: 2 }}
+            inputProps={{
+              placeholder: 'Birthday',
+              unmask: false,
+              lazy: true,
+              mask: '00/00/0000',
+              inputMode: 'numeric',
+            }}
+            InputProps={{
+              inputComponent: InputMask as any,
+            }}
           />
           {error && (
             <Typography variant='body2' sx={{ marginTop: 2 }} color={red[500]}>
