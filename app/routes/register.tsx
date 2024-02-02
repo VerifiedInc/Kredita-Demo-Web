@@ -145,6 +145,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       const firstName = result?.credentials?.fullName?.firstName;
 
       // Because the user has canceled 1-click flow, the credentials was not shared, so we need to logout the user.
+      // Customer Note: in a real implementation this ought to fall back to the standard sign up form.
       if (!firstName) return logoutUseCase({ request });
 
       return createUserSession(
