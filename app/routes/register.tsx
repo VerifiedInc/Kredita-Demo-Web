@@ -25,6 +25,7 @@ import { OneClickForm } from '~/features/register/components/OneClickForm';
 import { LogInAndRegister } from '~/components/LoginAndRegister';
 import { useBrand } from '~/hooks/useBrand';
 import { getBrandSet } from '~/utils/getBrandSet';
+import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -141,9 +142,14 @@ export const loader: LoaderFunction = async ({ request }) => {
       oneClickUuid
     );
     if (result) {
+      const firstName = result?.credentials?.fullName?.firstName;
+
+      // Because the user has canceled 1-click flow, the credentials was not shared, so we need to logout the user.
+      if (!firstName) return logoutUseCase({ request });
+
       return createUserSession(
         request,
-        String(result.credentials.fullName.firstName),
+        String(firstName),
         `/verified?${searchParams.toString()}`
       );
     }

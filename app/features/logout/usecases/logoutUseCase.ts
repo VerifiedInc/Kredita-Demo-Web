@@ -1,9 +1,10 @@
 import { logout } from '~/session.server';
+import { getFormDataOrEmpty } from '~/utils/getFormDataOrEmpty.server';
 
 export const logoutUseCase = async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
-  const formData = await request.clone().formData();
+  const formData = await getFormDataOrEmpty(request);
   const hasRedirectParam = formData.get('redirect') === 'true';
 
   searchParams.delete('1ClickUuid');
@@ -14,11 +15,7 @@ export const logoutUseCase = async ({ request }: { request: Request }) => {
   }
 
   const searchParamsString = searchParams.toString();
+  const search = searchParamsString ? `?${searchParamsString}` : '';
 
-  return logout(
-    request,
-    hasRedirectParam
-      ? `/register${searchParamsString ? `?${searchParamsString}` : ''}`
-      : undefined
-  );
+  return logout(request, `/register${search}`);
 };
