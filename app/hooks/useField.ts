@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { z } from 'zod';
 
-export const useField = (schema: z.ZodSchema) => {
+export const useField = (name: string, schema: z.ZodSchema) => {
   const [value, setValue] = useState<string>('');
   const [touched, setTouched] = useState<boolean>(false);
   const validation = schema.safeParse(value);
@@ -25,6 +25,7 @@ export const useField = (schema: z.ZodSchema) => {
   };
 
   return {
+    name,
     value,
     touched,
     error,

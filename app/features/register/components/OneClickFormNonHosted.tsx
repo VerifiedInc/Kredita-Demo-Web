@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
 import {
   Box,
@@ -22,12 +22,14 @@ import PhoneInput from '~/components/PhoneInput';
 import { OneClickHeader } from '~/features/register/components/OneClickHeader';
 import { OneClickLegalText } from '~/features/register/components/OneClickLegalText';
 import { InputMask } from '~/components/InputMask';
+import { oneClickNonHostedSchema } from '~/validations/oneClickNonHosted.schema';
 
 export function OneClickFormNonHosted() {
   const brand = useBrand();
 
-  const phone = useField(phoneSchema);
-  const birthday = useField(birthdaySchema);
+  const phone = useField('phone', phoneSchema);
+  const birthday = useField('birthday', birthdaySchema);
+
   const [count, setCount] = useState<number>(0);
 
   const [searchParams] = useSearchParams();
@@ -46,29 +48,38 @@ export function OneClickFormNonHosted() {
 
   const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
 
-  const handlePhoneChange = (value: string) => {
-    phone.change(value);
+  const handleFieldChange =
+    (field: ReturnType<typeof useField>) =>
+    (event: string | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = typeof event === 'string' ? event : event.target.value;
+      field.change(value);
 
-    const isValid = phone.isValid(value);
+      const isFormValid = oneClickNonHostedSchema.safeParse({
+        phone: phone.value,
+        birthday: birthday.value,
+        // Override the field that is being changed.
+        [field.name]: value,
+      }).success;
 
-    // Short-circuit if is not valid or is already fetching
-    if (!isValid || isFetching) return;
+      // Short-circuit if is not valid or is already fetching
+      if (!isFormValid || isFetching) return;
 
-    // HACK-alert
-    // phone input uses another input to hold original value,
-    // as the form submits on change event of the masked input,
-    // we have to wait the next tick to have the unmasked input value set on the form.
-    setTimeout(() => {
-      console.log('form is valid, fetching now...');
-      fetcherSubmit(formRef.current, { method: 'post' });
-    }, 10);
-  };
+      // HACK-alert
+      // phone input uses another input to hold original value,
+      // as the form submits on change event of the masked input,
+      // we have to wait the next tick to have the unmasked input value set on the form.
+      setTimeout(() => {
+        console.log('form is valid, fetching now...');
+        fetcherSubmit(formRef.current, { method: 'post' });
+      }, 10);
+    };
 
   // Reset form when is not fetching
   useEffect(() => {
     if (isFetching) return;
-    // Reset phone to initial state when is not fetching
+    // Reset phone and birthday to initial state when is not fetching
     phone.reset();
+    birthday.reset();
     setCount((prev) => prev + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching]);
@@ -113,7 +124,7 @@ export function OneClickFormNonHosted() {
             name='phone'
             autoFocus
             value={phone.value}
-            onChange={handlePhoneChange}
+            onChange={handleFieldChange(phone)}
             error={phone.touched && !!phone.error}
             helperText={(phone.touched && phone.error) || undefined}
             disabled={isFetching}
@@ -121,7 +132,7 @@ export function OneClickFormNonHosted() {
           <TextField
             name='birthday'
             value={birthday.value}
-            onChange={(e) => birthday.change(e.target.value)}
+            onChange={handleFieldChange(birthday)}
             error={birthday.touched && !!birthday.error}
             helperText={(birthday.touched && birthday.error) || 'mm/dd/yyyy'}
             disabled={isFetching}
