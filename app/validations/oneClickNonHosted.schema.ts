@@ -1,9 +1,9 @@
 import * as zod from 'zod';
 
 import { phoneSchema } from './phone.schema';
-import { birthdaySchema } from './birthday.schema';
+import { birthDateSchema } from './birthDate.schema';
 
 export const oneClickNonHostedSchema = zod.object({
   phone: phoneSchema,
-  birthday: birthdaySchema,
+  birthDate: birthDateSchema,
 });

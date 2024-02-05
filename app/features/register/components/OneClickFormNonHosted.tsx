@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
 import {
   Box,
@@ -14,7 +14,7 @@ import { red } from '@mui/material/colors';
 import parsePhoneNumber from 'libphonenumber-js';
 
 import { phoneSchema } from '~/validations/phone.schema';
-import { birthdaySchema } from '~/validations/birthday.schema';
+import { birthDateSchema } from '~/validations/birthDate.schema';
 import { useBrand } from '~/hooks/useBrand';
 import { useField } from '~/hooks/useField';
 import PhoneInput from '~/components/PhoneInput';
@@ -27,8 +27,8 @@ import { oneClickNonHostedSchema } from '~/validations/oneClickNonHosted.schema'
 export function OneClickFormNonHosted() {
   const brand = useBrand();
 
-  const phone = useField('phone', phoneSchema);
-  const birthday = useField('birthday', birthdaySchema);
+  const phone = useField({ name: 'phone', schema: phoneSchema });
+  const birthDate = useField({ name: 'birthDate', schema: birthDateSchema });
 
   const [count, setCount] = useState<number>(0);
 
@@ -46,7 +46,20 @@ export function OneClickFormNonHosted() {
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const redirectUrl = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+
+    const baseUrl = new URL(window.location.href);
+    const baseSearchParams = new URLSearchParams(baseUrl.searchParams);
+    const baseSearchParamsString = baseSearchParams.toString();
+    const redirectUrl = new URL(
+      baseUrl.origin +
+        '/personal-information' +
+        (baseSearchParamsString ? `?${baseSearchParamsString}` : '')
+    );
+
+    return redirectUrl.toString();
+  }, []);
 
   const handleFieldChange =
     (field: ReturnType<typeof useField>) =>
@@ -56,7 +69,7 @@ export function OneClickFormNonHosted() {
 
       const isFormValid = oneClickNonHostedSchema.safeParse({
         phone: phone.value,
-        birthday: birthday.value,
+        birthDate: birthDate.value,
         // Override the field that is being changed.
         [field.name]: value,
       }).success;
@@ -71,15 +84,15 @@ export function OneClickFormNonHosted() {
       setTimeout(() => {
         console.log('form is valid, fetching now...');
         fetcherSubmit(formRef.current, { method: 'post' });
-      }, 10);
+      }, 100);
     };
 
   // Reset form when is not fetching
   useEffect(() => {
     if (isFetching) return;
-    // Reset phone and birthday to initial state when is not fetching
+    // Reset phone and birth date to initial state when is not fetching
     phone.reset();
-    birthday.reset();
+    birthDate.reset();
     setCount((prev) => prev + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching]);
@@ -122,26 +135,28 @@ export function OneClickFormNonHosted() {
           <input name='redirectUrl' value={redirectUrl} hidden readOnly />
           <PhoneInput
             name='phone'
+            label='Phone'
             autoFocus
             value={phone.value}
             onChange={handleFieldChange(phone)}
             error={phone.touched && !!phone.error}
             helperText={(phone.touched && phone.error) || undefined}
             disabled={isFetching}
+            inputProps={{ placeholder: undefined }}
           />
           <TextField
-            name='birthday'
-            value={birthday.value}
-            onChange={handleFieldChange(birthday)}
-            error={birthday.touched && !!birthday.error}
-            helperText={(birthday.touched && birthday.error) || 'mm/dd/yyyy'}
+            name='birthDate'
+            label='Birthday'
+            value={birthDate.value}
+            onChange={handleFieldChange(birthDate)}
+            error={birthDate.touched && !!birthDate.error}
+            helperText={(birthDate.touched && birthDate.error) || 'YYYY-MM-DD'}
             disabled={isFetching}
             sx={{ mt: 2 }}
             inputProps={{
-              placeholder: 'Birthday',
               unmask: false,
               lazy: true,
-              mask: '00/00/0000',
+              mask: '0000-00-00',
               inputMode: 'numeric',
             }}
             InputProps={{

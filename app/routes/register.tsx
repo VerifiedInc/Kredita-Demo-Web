@@ -13,6 +13,7 @@ import {
   getSharedCredentialsOneClick,
   hasMatchingCredentials,
   oneClick,
+  OneClickOptions,
   sharedCredentials,
 } from '~/coreAPI.server';
 import { config } from '~/config';
@@ -38,6 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
   const action = formData.get('action');
   const email = formData.get('email');
   const phone = formData.get('phone');
+  const birthDate = (formData.get('birthDate') as string) || undefined;
   const apiKey = formData.get('apiKey');
   const redirectUrl = (formData.get('redirectUrl') as string) || undefined;
 
@@ -63,13 +65,22 @@ export const action: ActionFunction = async ({ request }) => {
       try {
         logger.info(`calling oneClick with ${apiKey}`);
 
-        const result = await oneClick(
-          apiKey as string,
+        const options: Partial<OneClickOptions> = {
           phone,
-          isRedirect
-            ? { redirectUrl, verificationOptions: 'only_code' }
-            : { redirectUrl }
-        );
+          birthDate,
+          redirectUrl,
+        };
+
+        // If the one-click non-hosted feature is enabled, set the isHosted option to false.
+        if (config.oneClickNonHostedEnabled) {
+          options.isHosted = false;
+        }
+
+        if (isRedirect) {
+          options.verificationOptions = 'only_code';
+        }
+
+        const result = await oneClick(apiKey as string, options);
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
 

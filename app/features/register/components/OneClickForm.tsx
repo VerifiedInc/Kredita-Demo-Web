@@ -114,12 +114,14 @@ export function OneClickForm() {
           <input name='redirectUrl' value={redirectUrl} hidden readOnly />
           <PhoneInput
             name='phone'
+            label='Phone'
             autoFocus
             value={value}
             onChange={handlePhoneChange}
             error={touched && !!errorMessage}
             helperText={(touched && errorMessage) || undefined}
             disabled={isFetching}
+            inputProps={{ placeholder: undefined }}
           />
           {error && (
             <Typography variant='body2' sx={{ marginTop: 2 }} color={red[500]}>

@@ -27,6 +27,8 @@ export interface HasMatchingCredentialsOptions {
 
 export interface OneClickOptions {
   phone: string;
+  birthDate?: string;
+  isHosted?: boolean;
   content?: {
     title?: string;
     description?: string;
@@ -295,9 +297,10 @@ export const getSharedCredentialsOneClick = async (
  */
 export const oneClick = async (
   apiKey: string,
-  phone?: string,
-  oneClickOptions?: Partial<OneClickOptions>
+  oneClickOptions: Partial<OneClickOptions>
 ): Promise<{ url: string; phone: string }> => {
+  const { phone } = oneClickOptions;
+
   // short circuit if phone are not provided
   if (!phone) {
     throw new Error('Phone was not provided');
