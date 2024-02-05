@@ -139,11 +139,31 @@ export function usePersonalInformationFields() {
     ]
   );
 
-  const isValid = useMemo(
-    () =>
-      Object.entries(fields).every(([, field]) => field.isValid(field.value)),
-    [fields]
+  // Specified the required fields
+  const requiredFields = useMemo(
+    () => [
+      'firstName',
+      'lastName',
+      'email',
+      'line1',
+      'city',
+      'state',
+      'country',
+      'zipCode',
+      'birthDate',
+      'ssn',
+    ],
+    []
   );
 
-  return { fields, isValid };
+  // Check if all fields are valid (if they are required)
+  const isValid = useMemo(
+    () =>
+      Object.entries(fields).every(([, field]) =>
+        requiredFields.includes(field.name) ? field.isValid(field.value) : true
+      ),
+    [fields, requiredFields]
+  );
+
+  return { fields, isValid, requiredFields };
 }

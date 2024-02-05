@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function PersonalInformation() {
   const brand = useBrand();
-  const { fields, isValid } = usePersonalInformationFields();
+  const { fields, isValid, requiredFields } = usePersonalInformationFields();
 
   const fieldSx: SxProps = { width: '100%' };
   const buttonContainerSx: SxProps = {
@@ -49,6 +49,8 @@ export default function PersonalInformation() {
     background:
       'linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 1) 35%)',
   };
+
+  const isRequired = (fieldName: string) => requiredFields.includes(fieldName);
 
   return (
     <Box
@@ -80,7 +82,7 @@ export default function PersonalInformation() {
           <TextField
             key={field.name}
             name={field.name}
-            label={field.label}
+            label={field.label + (isRequired(field.name) ? ' *' : '')}
             value={field.value}
             onChange={field.change}
             error={!!field.error}
