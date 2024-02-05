@@ -4,6 +4,7 @@ import { config } from '~/config';
 import { getBrandApiKey, getBrandDto } from '~/coreAPI.server';
 
 import { getBrand } from './getBrand';
+import { logger } from '~/logger.server';
 
 export const getBrandSet = async (searchParams: URLSearchParams) => {
   let brand = getBrand(null);
@@ -15,7 +16,11 @@ export const getBrandSet = async (searchParams: URLSearchParams) => {
 
     // Override possibly brand in session if query param is set.
     if (brandUuid) {
+      logger.info(`getting brand: ${brandUuid}`);
+
       apiKey = await getBrandApiKey(brandUuid, config.coreServiceAdminAuthKey);
+
+      logger.info(`got api key: ${apiKey}`);
 
       brand = getBrand(
         brandUuid
@@ -25,6 +30,8 @@ export const getBrandSet = async (searchParams: URLSearchParams) => {
             )) as BrandDto)
           : null
       );
+
+      logger.info(`got brand: ${JSON.stringify(brand)}`);
     }
   }
 

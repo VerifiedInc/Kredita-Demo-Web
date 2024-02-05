@@ -27,6 +27,7 @@ import { LogInAndRegister } from '~/components/LoginAndRegister';
 import { useBrand } from '~/hooks/useBrand';
 import { getBrandSet } from '~/utils/getBrandSet';
 import { OneClickFormNonHosted } from '~/features/register/components/OneClickFormNonHosted';
+import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
 export const action: ActionFunction = async ({ request }) => {
@@ -143,9 +144,18 @@ export const loader: LoaderFunction = async ({ request }) => {
       oneClickUuid
     );
     if (result) {
+      const fullName = result?.credentials?.fullName;
+      // Full name credential can be either a string or a record containing optionally the first name, last name, middle name.
+      const firstName =
+        typeof fullName === 'string' ? fullName : fullName?.firstName;
+
+      // Because the user has canceled 1-click flow, the credentials was not shared, so we need to logout the user.
+      // Customer Note: in a real implementation this ought to fall back to the standard sign up form.
+      if (!firstName) return logoutUseCase({ request });
+
       return createUserSession(
         request,
-        String(result.credentials.fullName.firstName),
+        String(firstName),
         `/verified?${searchParams.toString()}`
       );
     }
