@@ -411,6 +411,10 @@ export const getBrandApiKey = async (
       'Content-Type': 'application/json',
     };
 
+    logger.info(
+      `getting brand keys: /db/apiKeys?brandUuid=${brandUuid}&$select[]=key`
+    );
+
     const response = await fetch(
       config.coreServiceUrl +
         `/db/apiKeys?brandUuid=${brandUuid}&$select[]=key`,
@@ -424,6 +428,8 @@ export const getBrandApiKey = async (
     if (!response.ok) return config.verifiedApiKey;
 
     const result = await response.json();
+
+    logger.info(`brand keys: ${JSON.stringify(result)}`);
 
     return result.data[0].key;
   } catch (e) {
