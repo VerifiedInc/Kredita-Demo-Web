@@ -76,7 +76,9 @@ export const action: ActionFunction = async ({ request }) => {
           options.isHosted = false;
         }
 
-        if (isRedirect) {
+        // If the one-click non-hosted feature is enabled or redirect query param is set,
+        // then set the verificationOptions to only_code.
+        if (isRedirect || config.oneClickNonHostedEnabled) {
           options.verificationOptions = 'only_code';
         }
 
