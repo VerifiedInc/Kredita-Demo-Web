@@ -142,7 +142,10 @@ export const loader: LoaderFunction = async ({ request }) => {
       oneClickUuid
     );
     if (result) {
-      const firstName = result?.credentials?.fullName?.firstName;
+      const fullName = result?.credentials?.fullName;
+      // Full name credential can be either a string or a record containing optionally the first name, last name, middle name.
+      const firstName =
+        typeof fullName === 'string' ? fullName : fullName?.firstName;
 
       // Because the user has canceled 1-click flow, the credentials was not shared, so we need to logout the user.
       // Customer Note: in a real implementation this ought to fall back to the standard sign up form.
