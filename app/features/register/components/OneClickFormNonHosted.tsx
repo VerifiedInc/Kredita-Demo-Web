@@ -17,12 +17,13 @@ import { phoneSchema } from '~/validations/phone.schema';
 import { birthDateSchema } from '~/validations/birthDate.schema';
 import { useBrand } from '~/hooks/useBrand';
 import { useField } from '~/hooks/useField';
+import { InputMask } from '~/components/InputMask';
 import PhoneInput from '~/components/PhoneInput';
+import { OTPInput } from '~/components/OTPInput';
 
+import { oneClickNonHostedSchema } from '~/validations/oneClickNonHosted.schema';
 import { OneClickHeader } from '~/features/register/components/OneClickHeader';
 import { OneClickLegalText } from '~/features/register/components/OneClickLegalText';
-import { InputMask } from '~/components/InputMask';
-import { oneClickNonHostedSchema } from '~/validations/oneClickNonHosted.schema';
 
 export function OneClickFormNonHosted() {
   const brand = useBrand();
@@ -174,10 +175,21 @@ export function OneClickFormNonHosted() {
       <Dialog open={!isRedirect && isSuccess}>
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>
-            Please click the verification link we just texted to <br />
+            Enter the code we just texted to <br />
             {parsePhoneNumber(phoneRef.current ?? '')?.formatNational?.() ??
               phoneRef.current}
           </Typography>
+          <Box sx={{ mt: 2, maxWidth: 350, mx: 'auto' }}>
+            <OTPInput
+              name='otp'
+              onChange={(event) => {
+                const url = new URL(fetcherData.url);
+                url.searchParams.set('code', event.target.value);
+                window.location.href = url.toString();
+              }}
+              disabled={false}
+            />
+          </Box>
           <Stack justifyContent='center' mt={3}>
             <Button
               onClick={() => {
