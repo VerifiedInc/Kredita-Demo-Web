@@ -23,6 +23,8 @@ interface Config {
   oneClickEnabled: boolean;
   coreServiceAdminAuthKey: string;
   customBrandingEnabled: boolean;
+  noticeEnabled: boolean;
+  noticeText: string;
 }
 
 export const config: Config = {
@@ -47,4 +49,6 @@ export const config: Config = {
   customBrandingEnabled: Boolean(
     process.env.CUSTOM_BRANDING_ENABLED === 'true'
   ),
+  noticeEnabled: Boolean(process.env.NOTICE_ENABLED === 'true'),
+  noticeText: process.env.NOTICE_TEXT || '',
 };
