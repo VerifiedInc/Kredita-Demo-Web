@@ -13,7 +13,9 @@ import { PersonalInformationLoader } from '~/features/personalInformation/types'
 import { useField } from '~/hooks/useField';
 
 export function usePersonalInformationFields() {
-  const data = useLoaderData<PersonalInformationLoader>();
+  const {
+    oneClick: { credentials: data },
+  } = useLoaderData<PersonalInformationLoader>();
 
   const firstName = useField({
     name: 'firstName',

@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+import { LoaderFunction, json, redirect } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 import {
   Box,
   Button,
@@ -6,13 +9,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { LoaderFunction, json, redirect } from '@remix-run/node';
 
-import { getSharedCredentialsOneClick } from '~/coreAPI.server';
+import { getDBOneClick, getSharedCredentialsOneClick } from '~/coreAPI.server';
 import { getBrandSet } from '~/utils/getBrandSet';
+import { logger } from '~/logger.server';
 
 import { useBrand } from '~/hooks/useBrand';
 import { usePersonalInformationFields } from '~/features/personalInformation/hooks/usePersonalInformationFields';
+import { PersonalInformationLoader } from '~/features/personalInformation/types';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -22,14 +26,19 @@ export const loader: LoaderFunction = async ({ request }) => {
   const oneClickUuid = searchParams.get('1ClickUuid');
 
   if (oneClickUuid) {
-    const result = await getSharedCredentialsOneClick(
+    const oneClick = await getSharedCredentialsOneClick(
       brandSet.apiKey,
       oneClickUuid
     );
+    const oneClickDB = await getDBOneClick(oneClickUuid);
 
-    if (result?.credentials) {
-      return json(result?.credentials);
+    if (oneClick && oneClickDB) {
+      return json({ oneClick, oneClickDB });
     }
+
+    logger.error('OneClick not found', { oneClickUuid });
+
+    throw new Error('OneClick not found');
   }
 
   // No credentials found, so user should be redirected to the register page.
@@ -39,6 +48,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function PersonalInformation() {
   const brand = useBrand();
   const { fields, isValid, requiredFields } = usePersonalInformationFields();
+  const { oneClickDB } = useLoaderData<PersonalInformationLoader>();
 
   const fieldSx: SxProps = { width: '100%' };
   const buttonContainerSx: SxProps = {
@@ -50,7 +60,30 @@ export default function PersonalInformation() {
       'linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 1) 35%)',
   };
 
+  const redirectUrl = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+
+    const url = new URL(window.location.href);
+    const _redirectUrl = new URL(
+      oneClickDB.presentationRequest.brand.clientUrl || ''
+    );
+    const optedOut = url.searchParams.get('optedOut');
+
+    _redirectUrl.searchParams.set('1ClickUuid', oneClickDB.uuid);
+
+    if (optedOut) {
+      _redirectUrl.searchParams.set('optedOut', optedOut);
+    }
+
+    return _redirectUrl.toString();
+  }, [oneClickDB]);
+
   const isRequired = (fieldName: string) => requiredFields.includes(fieldName);
+
+  const handleGetStarted = () => {
+    if (typeof window === 'undefined') return;
+    window.location.href = redirectUrl;
+  };
 
   return (
     <Box
@@ -91,7 +124,7 @@ export default function PersonalInformation() {
           />
         ))}
         <Box sx={buttonContainerSx}>
-          <Button fullWidth disabled={!isValid}>
+          <Button onClick={handleGetStarted} fullWidth disabled={!isValid}>
             Get Started
           </Button>
         </Box>

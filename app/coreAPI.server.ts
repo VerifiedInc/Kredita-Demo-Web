@@ -1,4 +1,4 @@
-import { BrandDto, OneClickDto } from '@verifiedinc/core-types';
+import { BrandDto, OneClickDBDto, OneClickDto } from '@verifiedinc/core-types';
 
 import { config } from '~/config';
 import { logger } from './logger.server';
@@ -439,5 +439,35 @@ export const getBrandApiKey = async (
     logger.error(`getBrandApiKey failed. Error: ${e}`);
     // if the function failed to respond, return the default api key
     return config.verifiedApiKey;
+  }
+};
+
+/**
+ * Get DB 1-click.
+ * Customer Note: The authorization reflects our domain service consumption.
+ * @param uuid
+ * @returns
+ */
+export const getDBOneClick = async (uuid: string): Promise<OneClickDBDto> => {
+  logger.debug(`get 1-click ${uuid}`);
+
+  try {
+    const headers = {
+      Authorization: 'Bearer ' + config.coreServiceAdminAuthKey,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(
+      config.coreServiceUrl + `/db/1-click/${uuid}`,
+      {
+        method: 'GET',
+        headers,
+      }
+    );
+
+    return await response.json();
+  } catch (e) {
+    logger.error(`db/1-click get error: ${e}`);
+    throw e;
   }
 };
