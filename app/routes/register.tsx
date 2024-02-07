@@ -76,12 +76,17 @@ export const action: ActionFunction = async ({ request }) => {
           options.isHosted = false;
         }
 
-        // If the one-click non-hosted feature is enabled or redirect query param is set,
+        // If redirect query param is set,
         // then set the verificationOptions to only_code.
-        if (isRedirect || config.oneClickNonHostedEnabled) {
+        if (isRedirect) {
           options.verificationOptions = 'only_code';
         }
 
+        // If the one-click non-hosted feature is enabled,
+        // then set the verificationOptions to both_link_and_code.
+        if (config.oneClickNonHostedEnabled) {
+          options.verificationOptions = 'both_link_and_code';
+        }
         const result = await oneClick(apiKey as string, options);
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
