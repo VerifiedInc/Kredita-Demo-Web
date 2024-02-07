@@ -33,9 +33,6 @@ export function OneClickFormNonHosted() {
 
   const [count, setCount] = useState<number>(0);
 
-  const [searchParams] = useSearchParams();
-  const isRedirect = searchParams.get('redirect') === 'true';
-
   const fetcher = useFetcher();
   const isFetching = fetcher.state !== 'idle';
   const fetcherSubmit = fetcher.submit;
@@ -105,12 +102,8 @@ export function OneClickFormNonHosted() {
   }
 
   useEffect(() => {
-    if (!isRedirect) {
-      sessionStorage.removeItem('redirect');
-      return;
-    }
     sessionStorage.setItem('redirect', 'true');
-  }, [isRedirect]);
+  }, []);
 
   return (
     <>
@@ -172,7 +165,7 @@ export function OneClickFormNonHosted() {
         </Box>
       </fetcher.Form>
       <OneClickLegalText />
-      <Dialog open={!isRedirect && isSuccess}>
+      <Dialog open={isSuccess}>
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>
             Enter the code we just texted to <br />

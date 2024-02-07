@@ -86,8 +86,8 @@ export const action: ActionFunction = async ({ request }) => {
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
 
-        // Redirect user if query param is set.
-        if (isRedirect) {
+        // Redirect user if query param is set and is hosted.
+        if (isRedirect && !config.oneClickNonHostedEnabled) {
           return redirect(result.url);
         }
 
