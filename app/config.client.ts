@@ -4,6 +4,8 @@ export interface BrowserConfig {
   sentryDSN: string;
   release: string;
   oneClickEnabled: boolean;
+  noticeEnabled: boolean;
+  noticeText: string;
 }
 
 export const browserConfig: BrowserConfig =

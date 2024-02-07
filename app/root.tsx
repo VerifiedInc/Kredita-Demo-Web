@@ -80,6 +80,8 @@ export const loader: LoaderFunction = async ({ context, request }) => {
     sentryDSN,
     COMMIT_SHA,
     oneClickEnabled,
+    noticeEnabled,
+    noticeText,
   } = config;
 
   return json({
@@ -93,6 +95,8 @@ export const loader: LoaderFunction = async ({ context, request }) => {
       sentryDSN,
       release: COMMIT_SHA,
       oneClickEnabled,
+      noticeEnabled,
+      noticeText,
     },
     ...brandSet,
   });
