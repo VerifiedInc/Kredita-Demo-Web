@@ -19,7 +19,7 @@ export function getBrand(brandDto: BrandDto | null): Brand {
       uuid: '_',
       name: 'Kredita',
       logo: '/logo192.webp',
-      homepageUrl: '/',
+      homepageUrl: '',
       theme: {
         light: '#FACE6F',
         main: '#FFAD00',

@@ -44,9 +44,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Verified() {
   const brand = useBrand();
   const { name } = useLoaderData<typeof loader>();
-  const hasRedirect =
-    typeof window !== 'undefined' &&
-    sessionStorage.getItem('redirect') === 'true';
 
   const renderGoHomeButton = () => {
     const buttonProps = {
@@ -91,7 +88,6 @@ export default function Verified() {
       {renderGoHomeButton()}
       <Form method='post'>
         <input name='action' value='logout' readOnly hidden />
-        <input name='redirect' value={String(hasRedirect)} readOnly hidden />
         <Button
           variant='outlined'
           size='small'

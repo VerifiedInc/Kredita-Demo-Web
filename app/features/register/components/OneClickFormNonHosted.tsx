@@ -1,17 +1,7 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Box, Dialog, TextField, Typography } from '@mui/material';
 import { red } from '@mui/material/colors';
-import parsePhoneNumber from 'libphonenumber-js';
 
 import { phoneSchema } from '~/validations/phone.schema';
 import { birthDateSchema } from '~/validations/birthDate.schema';
@@ -19,17 +9,22 @@ import { useBrand } from '~/hooks/useBrand';
 import { useField } from '~/hooks/useField';
 import { InputMask } from '~/components/InputMask';
 import PhoneInput from '~/components/PhoneInput';
-import { OTPInput } from '~/components/OTPInput';
 
 import { oneClickNonHostedSchema } from '~/validations/oneClickNonHosted.schema';
 import { OneClickHeader } from '~/features/register/components/OneClickHeader';
 import { OneClickLegalText } from '~/features/register/components/OneClickLegalText';
+import { OneClickPromptDialogContent } from './OneClickPromptDialogContent';
+import { OneClickSMSDialogContent } from './OneClickSMSDialogContent';
 
 export function OneClickFormNonHosted() {
   const brand = useBrand();
 
   const phone = useField({ name: 'phone', schema: phoneSchema });
   const birthDate = useField({ name: 'birthDate', schema: birthDateSchema });
+
+  const [searchParams] = useSearchParams();
+  const verificationOptions =
+    searchParams.get('verificationOptions') || 'only_link';
 
   const [count, setCount] = useState<number>(0);
 
@@ -95,15 +90,16 @@ export function OneClickFormNonHosted() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetching]);
 
+  // Set in session storage the verification options
+  useEffect(() => {
+    sessionStorage.setItem('verificationOptions', verificationOptions);
+  }, [verificationOptions]);
+
   if (isSuccess) {
-    console.log('response is successfull', fetcherData);
+    console.log('response is successful', fetcherData);
     // Assign fone to ref so we can use it in the dialog without flikering when fetcherData is null.
     phoneRef.current = phoneFetcherData;
   }
-
-  useEffect(() => {
-    sessionStorage.setItem('redirect', 'true');
-  }, []);
 
   return (
     <>
@@ -165,45 +161,28 @@ export function OneClickFormNonHosted() {
         </Box>
       </fetcher.Form>
       <OneClickLegalText />
-      <Dialog open={isSuccess}>
-        <DialogContent>
-          <Typography fontWeight={700} textAlign='center'>
-            Enter the code we just texted to <br />
-            {parsePhoneNumber(phoneRef.current ?? '')?.formatNational?.() ??
-              phoneRef.current}
-          </Typography>
-          <Box sx={{ mt: 2, maxWidth: 350, mx: 'auto' }}>
-            <OTPInput
-              name='otp'
-              onChange={(event) => {
-                const url = new URL(fetcherData.url);
-                url.searchParams.set('code', event.target.value);
-                window.location.href = url.toString();
-              }}
-              disabled={false}
-            />
-          </Box>
-          <Stack justifyContent='center' mt={3}>
-            <Button
-              onClick={() => {
-                const formData = new FormData();
-                formData.set('action', 'reset');
-                fetcher.submit(formData, { method: 'post' });
-              }}
-              variant='outlined'
-              size='small'
-              startIcon={<ArrowBack sx={{ width: 24, height: 24 }} />}
-              sx={{
-                alignSelf: 'center',
-                py: 1,
-                px: 2,
-                fontSize: '1rem',
-              }}
-            >
-              Re-Enter Phone
-            </Button>
-          </Stack>
-        </DialogContent>
+
+      <Dialog open={isSuccess && verificationOptions === 'only_link'}>
+        <OneClickSMSDialogContent
+          phone={phoneRef.current ?? ''}
+          onRetryClick={() => {
+            const formData = new FormData();
+            formData.set('action', 'reset');
+            fetcher.submit(formData, { method: 'post' });
+          }}
+        />
+      </Dialog>
+
+      <Dialog open={isSuccess && verificationOptions !== 'only_link'}>
+        <OneClickPromptDialogContent
+          phone={phoneRef.current ?? ''}
+          oneClickUrl={fetcherData?.url ?? ''}
+          onRetryClick={() => {
+            const formData = new FormData();
+            formData.set('action', 'reset');
+            fetcher.submit(formData, { method: 'post' });
+          }}
+        />
       </Dialog>
     </>
   );

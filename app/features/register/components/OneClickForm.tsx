@@ -1,16 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Box, Dialog, Typography } from '@mui/material';
 import { red } from '@mui/material/colors';
-import parsePhoneNumber from 'libphonenumber-js';
 
 import { phoneSchema } from '~/validations/phone.schema';
 
@@ -18,6 +9,8 @@ import { useBrand } from '~/hooks/useBrand';
 import PhoneInput from '~/components/PhoneInput';
 import { OneClickHeader } from '~/features/register/components/OneClickHeader';
 import { OneClickLegalText } from './OneClickLegalText';
+import { OneClickSMSDialogContent } from './OneClickSMSDialogContent';
+import { OneClickPromptDialogContent } from './OneClickPromptDialogContent';
 
 export function OneClickForm() {
   const brand = useBrand();
@@ -27,7 +20,8 @@ export function OneClickForm() {
   const [count, setCount] = useState<number>(0);
 
   const [searchParams] = useSearchParams();
-  const isRedirect = searchParams.get('redirect') === 'true';
+  const verificationOptions =
+    searchParams.get('verificationOptions') || 'only_link';
 
   const validation = phoneSchema.safeParse(value);
   const errorMessage = !validation.success
@@ -82,13 +76,10 @@ export function OneClickForm() {
     phoneRef.current = phone;
   }
 
+  // Set in session storage the verification options
   useEffect(() => {
-    if (!isRedirect) {
-      sessionStorage.removeItem('redirect');
-      return;
-    }
-    sessionStorage.setItem('redirect', 'true');
-  }, [isRedirect]);
+    sessionStorage.setItem('verificationOptions', verificationOptions);
+  }, [verificationOptions]);
 
   return (
     <>
@@ -131,34 +122,28 @@ export function OneClickForm() {
         </Box>
       </fetcher.Form>
       <OneClickLegalText />
-      <Dialog open={!isRedirect && isSuccess}>
-        <DialogContent>
-          <Typography fontWeight={700} textAlign='center'>
-            Please click the verification link we just texted to <br />
-            {parsePhoneNumber(phoneRef.current ?? '')?.formatNational?.() ??
-              phoneRef.current}
-          </Typography>
-          <Stack justifyContent='center' mt={3}>
-            <Button
-              onClick={() => {
-                const formData = new FormData();
-                formData.set('action', 'reset');
-                fetcher.submit(formData, { method: 'post' });
-              }}
-              variant='outlined'
-              size='small'
-              startIcon={<ArrowBack sx={{ width: 24, height: 24 }} />}
-              sx={{
-                alignSelf: 'center',
-                py: 1,
-                px: 2,
-                fontSize: '1rem',
-              }}
-            >
-              Re-Enter Phone
-            </Button>
-          </Stack>
-        </DialogContent>
+
+      <Dialog open={isSuccess && verificationOptions === 'only_link'}>
+        <OneClickSMSDialogContent
+          phone={phoneRef.current ?? ''}
+          onRetryClick={() => {
+            const formData = new FormData();
+            formData.set('action', 'reset');
+            fetcher.submit(formData, { method: 'post' });
+          }}
+        />
+      </Dialog>
+
+      <Dialog open={isSuccess && verificationOptions !== 'only_link'}>
+        <OneClickPromptDialogContent
+          phone={phoneRef.current ?? ''}
+          oneClickUrl={fetcherData?.url ?? ''}
+          onRetryClick={() => {
+            const formData = new FormData();
+            formData.set('action', 'reset');
+            fetcher.submit(formData, { method: 'post' });
+          }}
+        />
       </Dialog>
     </>
   );
