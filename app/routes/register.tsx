@@ -13,18 +13,21 @@ import {
   getSharedCredentialsOneClick,
   hasMatchingCredentials,
   oneClick,
+  OneClickOptions,
   sharedCredentials,
 } from '~/coreAPI.server';
 import { config } from '~/config';
 import { logger } from '~/logger.server';
 
 import { useIsOneClick } from '~/hooks/useIsOneClick';
+import { useIsOneClickNonHosted } from '~/hooks/useIsOneClickNonHosted';
 import { ActionData } from '~/features/register/types';
 import { RegularForm } from '~/features/register/components/RegularForm';
 import { OneClickForm } from '~/features/register/components/OneClickForm';
 import { LogInAndRegister } from '~/components/LoginAndRegister';
 import { useBrand } from '~/hooks/useBrand';
 import { getBrandSet } from '~/utils/getBrandSet';
+import { OneClickFormNonHosted } from '~/features/register/components/OneClickFormNonHosted';
 import { logoutUseCase } from '~/features/logout/usecases/logoutUseCase';
 
 // The exported `action` function will be called when the route makes a POST request, i.e. when the form is submitted.
@@ -36,6 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
   const action = formData.get('action');
   const email = formData.get('email');
   const phone = formData.get('phone');
+  const birthDate = (formData.get('birthDate') as string) || undefined;
   const apiKey = formData.get('apiKey');
   const redirectUrl = (formData.get('redirectUrl') as string) || undefined;
 
@@ -61,18 +65,34 @@ export const action: ActionFunction = async ({ request }) => {
       try {
         logger.info(`calling oneClick with ${apiKey}`);
 
-        const result = await oneClick(
-          apiKey as string,
+        const options: Partial<OneClickOptions> = {
           phone,
-          isRedirect
-            ? { redirectUrl, verificationOptions: 'only_code' }
-            : { redirectUrl }
-        );
+          birthDate,
+          redirectUrl,
+        };
+
+        // If the one-click non-hosted feature is enabled, set the isHosted option to false.
+        if (config.oneClickNonHostedEnabled) {
+          options.isHosted = false;
+        }
+
+        // If redirect query param is set,
+        // then set the verificationOptions to only_code.
+        if (isRedirect) {
+          options.verificationOptions = 'only_code';
+        }
+
+        // If the one-click non-hosted feature is enabled,
+        // then set the verificationOptions to both_link_and_code.
+        if (config.oneClickNonHostedEnabled) {
+          options.verificationOptions = 'both_link_and_code';
+        }
+        const result = await oneClick(apiKey as string, options);
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
 
-        // Redirect user if query param is set.
-        if (isRedirect) {
+        // Redirect user if query param is set and is hosted.
+        if (isRedirect && !config.oneClickNonHostedEnabled) {
           return redirect(result.url);
         }
 
@@ -189,6 +209,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Register() {
   const actionData: ActionData | undefined = useActionData();
   const isOneClick = useIsOneClick();
+  const isOneClickNonHosted = useIsOneClickNonHosted();
   const brand = useBrand();
 
   console.log('actionData', actionData);
@@ -202,7 +223,8 @@ export default function Register() {
     >
       {/* When is regular flow, render the default form */}
       {!isOneClick && <RegularForm />}
-      {isOneClick && <OneClickForm />}
+      {isOneClick && !isOneClickNonHosted && <OneClickForm />}
+      {isOneClickNonHosted && <OneClickFormNonHosted />}
       <LogInAndRegister theme={brand.theme} sx={{ maxWidth: 264 }} />
     </Box>
   );

@@ -4,6 +4,7 @@ export interface BrowserConfig {
   sentryDSN: string;
   release: string;
   oneClickEnabled: boolean;
+  oneClickNonHostedEnabled: boolean;
   noticeEnabled: boolean;
   noticeText: string;
 }

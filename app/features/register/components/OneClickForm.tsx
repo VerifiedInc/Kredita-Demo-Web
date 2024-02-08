@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useFetcher, useSearchParams } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import {
   Box,
   Button,
@@ -7,7 +7,6 @@ import {
   DialogContent,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { red } from '@mui/material/colors';
@@ -15,11 +14,12 @@ import parsePhoneNumber from 'libphonenumber-js';
 
 import { phoneSchema } from '~/validations/phone.schema';
 
-import PhoneInput from '~/components/PhoneInput';
 import { useBrand } from '~/hooks/useBrand';
+import PhoneInput from '~/components/PhoneInput';
+import { OneClickHeader } from '~/features/register/components/OneClickHeader';
+import { OneClickLegalText } from './OneClickLegalText';
 
 export function OneClickForm() {
-  const theme = useTheme();
   const brand = useBrand();
 
   const [value, setValue] = useState<string>('');
@@ -95,9 +95,7 @@ export function OneClickForm() {
       <Typography variant='h1' mt={0} align='center'>
         {brand.name}
       </Typography>
-      <Typography variant='h3' mt={2.5} mb={1} fontWeight={400}>
-        You’re moments away from magic…
-      </Typography>
+      <OneClickHeader />
       <fetcher.Form
         ref={formRef}
         method='post'
@@ -116,12 +114,14 @@ export function OneClickForm() {
           <input name='redirectUrl' value={redirectUrl} hidden readOnly />
           <PhoneInput
             name='phone'
+            label='Phone'
             autoFocus
             value={value}
             onChange={handlePhoneChange}
             error={touched && !!errorMessage}
             helperText={(touched && errorMessage) || undefined}
             disabled={isFetching}
+            inputProps={{ placeholder: undefined }}
           />
           {error && (
             <Typography variant='body2' sx={{ marginTop: 2 }} color={red[500]}>
@@ -130,31 +130,7 @@ export function OneClickForm() {
           )}
         </Box>
       </fetcher.Form>
-      <Typography
-        variant='caption'
-        mt={1.8}
-        mb={4.5}
-        color='neutral.main'
-        sx={{ textAlign: 'center' }}
-      >
-        By using {brand.name} demo, you agree to Verified Inc.‘s{' '}
-        <Link
-          to='https://www.verified.inc/legal#terms-of-use'
-          target='_blank'
-          style={{ color: theme.palette.primary.main }}
-        >
-          Terms of Use
-        </Link>{' '}
-        <br /> and acknowledge our{' '}
-        <Link
-          to='https://www.verified.inc/legal#privacy-policy'
-          target='_blank'
-          style={{ color: theme.palette.primary.main }}
-        >
-          Privacy Policy
-        </Link>
-        .
-      </Typography>
+      <OneClickLegalText />
       <Dialog open={!isRedirect && isSuccess}>
         <DialogContent>
           <Typography fontWeight={700} textAlign='center'>

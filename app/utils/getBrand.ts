@@ -28,7 +28,7 @@ export function getBrand(brandDto: BrandDto | null): Brand {
     };
   }
 
-  const primaryColor = brandDto.primaryColor || '#111';
+  const primaryColor = brandDto.primaryColor || '#a5a5a5';
 
   return {
     uuid: brandDto.uuid,

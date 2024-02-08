@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Box, TextField, TextFieldProps } from '@mui/material';
+import { Box, InputBaseProps, TextField, TextFieldProps } from '@mui/material';
 
 import { InputMask } from './InputMask';
 
@@ -15,6 +15,7 @@ export type PhoneInputProps = {
   variant?: TextFieldProps['variant'];
   autoFocus?: boolean;
   disabled?: boolean;
+  inputProps?: InputBaseProps['inputProps'];
 };
 
 /**
@@ -22,6 +23,7 @@ export type PhoneInputProps = {
  */
 export default function PhoneInput({
   name = 'phone',
+  label,
   helperText,
   onChange,
   initialValue = '',
@@ -29,6 +31,7 @@ export default function PhoneInput({
   value: valueProp,
   autoFocus = false,
   disabled = false,
+  inputProps: _inputProps,
 }: Readonly<PhoneInputProps>) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,6 +61,7 @@ export default function PhoneInput({
     inputRef,
     autoFocus,
     name: '_' + name,
+    label,
     helperText,
     // if the value prop is passed, use it, otherwise use the value from component state
     // this allows the parent component to control the value of the input field
@@ -74,6 +78,7 @@ export default function PhoneInput({
       lazy: true,
       mask: '{+1} (000) 000-0000',
       inputMode: 'numeric',
+      ..._inputProps,
     },
     InputProps: {
       inputComponent: InputMask as any,
