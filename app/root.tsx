@@ -81,6 +81,8 @@ export const loader: LoaderFunction = async ({ context, request }) => {
     COMMIT_SHA,
     oneClickEnabled,
     oneClickNonHostedEnabled,
+    noticeEnabled,
+    noticeText,
   } = config;
 
   return json({
@@ -95,6 +97,8 @@ export const loader: LoaderFunction = async ({ context, request }) => {
       release: COMMIT_SHA,
       oneClickEnabled,
       oneClickNonHostedEnabled,
+      noticeEnabled,
+      noticeText,
     },
     ...brandSet,
   });

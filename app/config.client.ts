@@ -5,6 +5,8 @@ export interface BrowserConfig {
   release: string;
   oneClickEnabled: boolean;
   oneClickNonHostedEnabled: boolean;
+  noticeEnabled: boolean;
+  noticeText: string;
 }
 
 export const browserConfig: BrowserConfig =

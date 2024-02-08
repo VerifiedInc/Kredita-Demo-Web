@@ -24,6 +24,8 @@ interface Config {
   oneClickNonHostedEnabled: boolean;
   coreServiceAdminAuthKey: string;
   customBrandingEnabled: boolean;
+  noticeEnabled: boolean;
+  noticeText: string;
 }
 
 export const config: Config = {
@@ -51,4 +53,8 @@ export const config: Config = {
   customBrandingEnabled: Boolean(
     process.env.CUSTOM_BRANDING_ENABLED === 'true'
   ),
+  noticeEnabled: Boolean(process.env.NOTICE_ENABLED === 'true'),
+  noticeText:
+    process.env.NOTICE_TEXT ||
+    'This is a live demo of <a href="https://www.verified.inc/solutions/for-people#1-click-sign-up">1-Click Signup</a>. You will see dummy data. To try 1-Click Signup with real data, try our <a href=https://1click.demo.verifiedinc.com/>Production demo</a>',
 };
