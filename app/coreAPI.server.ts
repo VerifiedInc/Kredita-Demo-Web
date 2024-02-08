@@ -330,7 +330,8 @@ export const oneClick = async (
     });
     const result = await response.json();
 
-    if (!result?.url?.length) {
+    // If the result is not a match, throw an error
+    if (!result?.match) {
       logger.debug(
         `Phone invalid or unsupported ${phone}. Error: ${result.message}`
       );
@@ -345,7 +346,7 @@ export const oneClick = async (
     );
 
     // the url will contain link or not based on credential request configuration
-    return { url: result.url, phone };
+    return { ...result, phone };
   } catch (e) {
     logger.error(`oneClick for ${phone} failed. Error: ${e}`);
     throw e;

@@ -43,7 +43,8 @@ export const action: ActionFunction = async ({ request }) => {
   const apiKey = formData.get('apiKey');
   const redirectUrl = (formData.get('redirectUrl') as string) || undefined;
 
-  const isRedirect = searchParams.get('redirect') === 'true';
+  const verificationOptions =
+    searchParams.get('verificationOptions') || 'only_link';
 
   if (!action) {
     return json({ error: 'Action must be populated' }, { status: 400 });
@@ -69,6 +70,8 @@ export const action: ActionFunction = async ({ request }) => {
           phone,
           birthDate,
           redirectUrl,
+          verificationOptions:
+            verificationOptions as OneClickOptions['verificationOptions'],
         };
 
         // If the one-click non-hosted feature is enabled, set the isHosted option to false.
@@ -76,25 +79,9 @@ export const action: ActionFunction = async ({ request }) => {
           options.isHosted = false;
         }
 
-        // If redirect query param is set,
-        // then set the verificationOptions to only_code.
-        if (isRedirect) {
-          options.verificationOptions = 'only_code';
-        }
-
-        // If the one-click non-hosted feature is enabled,
-        // then set the verificationOptions to both_link_and_code.
-        if (config.oneClickNonHostedEnabled) {
-          options.verificationOptions = 'both_link_and_code';
-        }
         const result = await oneClick(apiKey as string, options);
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
-
-        // Redirect user if query param is set and is hosted.
-        if (isRedirect && !config.oneClickNonHostedEnabled) {
-          return redirect(result.url);
-        }
 
         // Otherwise, display on UI the success message.
         return { ...result, success: true };

@@ -30,8 +30,6 @@ export default function Layout({ children }: PropsWithChildren) {
             sx={{
               mt: 2,
               color: 'text.secondary',
-              position: 'sticky',
-              top: 16,
               a: { color: 'text.secondary' },
             }}
           >

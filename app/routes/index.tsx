@@ -29,10 +29,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
   const borderRadius = 30;
-  const hasRedirect =
-    typeof window !== 'undefined' &&
-    sessionStorage.getItem('redirect') === 'true';
-
   return (
     <Box
       position='relative'
@@ -91,7 +87,6 @@ export default function Index() {
         </IconBoxAndLabel>
       </Box>
       <Form method='post'>
-        <input name='redirect' value={String(hasRedirect)} readOnly hidden />
         <Button>Sign Out</Button>
       </Form>
     </Box>

@@ -68,11 +68,16 @@ export default function PersonalInformation() {
       oneClickDB.presentationRequest.brand.clientUrl || ''
     );
     const optedOut = url.searchParams.get('optedOut');
+    const verificationOptions = url.searchParams.get('verificationOptions');
 
     _redirectUrl.searchParams.set('1ClickUuid', oneClickDB.uuid);
 
     if (optedOut) {
       _redirectUrl.searchParams.set('optedOut', optedOut);
+    }
+
+    if (verificationOptions) {
+      _redirectUrl.searchParams.set('verificationOptions', verificationOptions);
     }
 
     return _redirectUrl.toString();
