@@ -45,6 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const verificationOptions =
     searchParams.get('verificationOptions') || 'only_link';
+  const isHosted = searchParams.get('isHosted') !== 'false' ?? true;
 
   if (!action) {
     return json({ error: 'Action must be populated' }, { status: 400 });
@@ -72,16 +73,21 @@ export const action: ActionFunction = async ({ request }) => {
           redirectUrl,
           verificationOptions:
             verificationOptions as OneClickOptions['verificationOptions'],
+          isHosted,
         };
-
-        // If the one-click non-hosted feature is enabled, set the isHosted option to false.
-        if (config.oneClickNonHostedEnabled) {
-          options.isHosted = false;
-        }
 
         const result = await oneClick(apiKey as string, options);
 
         logger.info(`oneClick result: ${JSON.stringify(result)}`);
+
+        // If 1-click is hosted, and verification options is either code or both link and code,
+        // redirect the user to the URL returned from the oneClick API.
+        if (
+          isHosted &&
+          ['only_code', 'both_link_and_code'].includes(verificationOptions)
+        ) {
+          return redirect(result.url);
+        }
 
         // Otherwise, display on UI the success message.
         return { ...result, success: true };

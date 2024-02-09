@@ -69,6 +69,7 @@ export default function PersonalInformation() {
     );
     const optedOut = url.searchParams.get('optedOut');
     const verificationOptions = url.searchParams.get('verificationOptions');
+    const isHosted = url.searchParams.get('isHosted');
 
     _redirectUrl.searchParams.set('1ClickUuid', oneClickDB.uuid);
 
@@ -78,6 +79,10 @@ export default function PersonalInformation() {
 
     if (verificationOptions) {
       _redirectUrl.searchParams.set('verificationOptions', verificationOptions);
+    }
+
+    if (isHosted) {
+      _redirectUrl.searchParams.set('isHosted', isHosted);
     }
 
     return _redirectUrl.toString();

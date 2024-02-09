@@ -21,7 +21,6 @@ interface Config {
   demoUrl: string;
   sentryDSN: string;
   oneClickEnabled: boolean;
-  oneClickNonHostedEnabled: boolean;
   coreServiceAdminAuthKey: string;
   customBrandingEnabled: boolean;
   noticeEnabled: boolean;
@@ -46,9 +45,6 @@ export const config: Config = {
   demoUrl: process.env.DEMO_URL || '',
   sentryDSN: process.env.SENTRY_DSN || '',
   oneClickEnabled: Boolean(process.env.ONE_CLICK_ENABLED === 'true'),
-  oneClickNonHostedEnabled: Boolean(
-    process.env.ONE_CLICK_NON_HOSTED_ENABLED === 'true'
-  ),
   coreServiceAdminAuthKey: process.env.CORE_SERVICE_ADMIN_AUTH_KEY || '',
   customBrandingEnabled: Boolean(
     process.env.CUSTOM_BRANDING_ENABLED === 'true'
