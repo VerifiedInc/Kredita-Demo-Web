@@ -1,11 +1,10 @@
 import { logout } from '~/session.server';
-import { getFormDataOrEmpty } from '~/utils/getFormDataOrEmpty.server';
 
 export const logoutUseCase = async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
-  const formData = await getFormDataOrEmpty(request);
-  const verificationOptions = formData.get('verificationOptions');
+  const verificationOptions = searchParams.get('verificationOptions');
+  const isHosted = searchParams.get('isHosted');
 
   searchParams.delete('1ClickUuid');
   searchParams.delete('sharedCredentialsUuid');
@@ -13,6 +12,10 @@ export const logoutUseCase = async ({ request }: { request: Request }) => {
 
   if (verificationOptions) {
     searchParams.set('verificationOptions', String(verificationOptions));
+  }
+
+  if (isHosted) {
+    searchParams.set('isHosted', String(isHosted));
   }
 
   const searchParamsString = searchParams.toString();
