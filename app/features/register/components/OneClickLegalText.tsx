@@ -15,7 +15,7 @@ export function OneClickLegalText() {
       color='neutral.main'
       sx={{ textAlign: 'center' }}
     >
-      By using {brand.name} demo, you agree to Verified Inc.‘s{' '}
+      By using this {brand.name} demo, you agree to Verified Inc.‘s{' '}
       <Link
         to='https://www.verified.inc/legal#terms-of-use'
         target='_blank'
