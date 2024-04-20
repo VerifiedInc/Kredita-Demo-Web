@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  unumid: unumid/unumid-app-orb@1.3.0
+  unumid: unumid/unumid-app-orb@2.0.0
 
 workflows:
   lint-and-test:
@@ -107,31 +107,32 @@ workflows:
               only:
                 - main
 
-  build-and-deploy-sandbox:
+  build-and-deploy-staging:
     jobs:
       - unumid/lint-and-test:
           compile_script_name: 'build'
+          enable_slack_failure_notification: true
           filters:
             tags:
-              only: /^v.*/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
       - unumid/build-and-push-image:
-          name: unumid/build-and-push-image-sandbox
+          name: unumid/build-and-push-image-staging
           requires:
             - unumid/lint-and-test
           context:
             - AWS-Root-Account
             - Slack-Context
-          account_id_1: '032538391126'
-          account_id_2: '574388719779' # pushing to production account thanks to wanting to expose the 1click prefill demo to the world
+          account_id_1: 058264190665
+          publish_image_tag_1: true
           repo: kredita-demo-web
           image_tag_1: '${CIRCLE_TAG}'
-          image_tag_2: sandbox-latest
+          image_tag_2: staging-latest
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
@@ -148,67 +149,67 @@ workflows:
           sentry_project: kredita-demo-web
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
       - unumid/deploy-image:
-          name: unumid/deploy-image-sandbox
+          name: unumid/deploy-image-staging
           requires:
-            - unumid/build-and-push-image-sandbox
+            - unumid/build-and-push-image-staging
           context:
             - AWS-Root-Account
             - Slack-Context
-          account_id: 032538391126
+          account_id: 058264190665
           repo: kredita-demo-web
           deployment: kredita-demo-web
-          cluster_name: sandbox-account-saas-cluster
+          cluster_name: staging-account-core-cluster
           namespace: demos
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
       - unumid/deploy-image:
-          name: unumid/deploy-image-sandbox-1click
+          name: unumid/deploy-image-staging-1click
           requires:
-            - unumid/build-and-push-image-sandbox
+            - unumid/build-and-push-image-staging
           context:
             - AWS-Root-Account
             - Slack-Context
-          account_id: 032538391126
+          account_id: 058264190665
           repo: kredita-demo-web
           deployment: kredita-1click-demo-web
-          cluster_name: sandbox-account-saas-cluster
+          cluster_name: staging-account-core-cluster
           namespace: demos
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
       - unumid/deploy-image:
-          name: unumid/deploy-image-sandbox-1click-whitelabel
+          name: unumid/deploy-image-staging-1click-whitelabel
           requires:
-            - unumid/build-and-push-image-sandbox
+            - unumid/build-and-push-image-staging
           context:
             - AWS-Root-Account
             - Slack-Context
-          account_id: 032538391126
+          account_id: 058264190665
           repo: kredita-demo-web
           deployment: kredita-1click-whitelabel-demo-web
-          cluster_name: sandbox-account-saas-cluster
+          cluster_name: staging-account-core-cluster
           namespace: demos
           image_tag: '${CIRCLE_TAG}'
           slack_pass_notify_template: success_tagged_deploy_1
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v\d+\.\d+\.\d+.*$/
             branches:
               ignore: /.*/
 
